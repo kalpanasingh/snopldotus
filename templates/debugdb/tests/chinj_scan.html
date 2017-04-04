@@ -1,0 +1,109 @@
+{% extends 'debugdb/test.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block results %}
+<script src="{% static 'js/jquery.flot.min.js' %}"></script>
+<h3>Plots (Channel 0)</h3>
+<div style="display: inline-block; text-align: center">
+ <h5>QHL</h5>
+ <div id="qhl" style="width:400px;height:200px;"></div>
+</div>
+<div style="display: inline-block; text-align: center">
+ <h5>QHS</h5>
+ <div id="qhs" style="width:400px;height:200px;"></div>
+</div>
+<div style="display: inline-block; text-align: center">
+ <h5>QLX</h5>
+ <div id="qlx" style="width:400px;height:200px;"></div>
+</div>
+<div style="display: inline-block; text-align: center">
+ <h5>TAC</h5>
+ <div id="tac" style="width:400px;height:200px;"></div>
+</div>
+<script>
+ var charges = [
+  [{{ QHL_even.0|join:"," }}],
+  [{{ QHL_odd.0|join:"," }}],
+  [{{ QHS_even.0|join:"," }}],
+  [{{ QHS_odd.0|join:"," }}],
+  [{{ QLX_even.0|join:"," }}],
+  [{{ QLX_odd.0|join:"," }}],
+  [{{ TAC_even.0|join:"," }}],
+  [{{ TAC_odd.0|join:"," }}],
+ ]
+ for (var i=0; i<charges.length; i++) {
+  for (var j=0; j<charges[i].length; j++) {
+   charges[i][j] = [j, charges[i][j]];
+  }
+ }
+ $.plot($("#qhl"), [
+  { label: "QHL even", data: charges[0]},
+  { label: "QHL odd", data: charges[1]},
+ ]);
+ $.plot($("#qhs"), [
+  { label: "QHS even", data: charges[2]},
+  { label: "QHS odd", data: charges[3]},
+ ]);
+ $.plot($("#qlx"), [
+  { label: "QLX even", data: charges[4]},
+  { label: "QLX odd", data: charges[5]},
+ ]);
+ $.plot($("#tac"), [
+  { label: "TAC even", data: charges[6]},
+  { label: "TAC odd", data: charges[7]},
+ ]);
+</script>
+
+<h3>Results</h3>
+{% for qhl_even in QHL_even %}
+{% with forloop.counter0 as channel_index %}
+<table class="table table-striped table-condensed">
+ <tr>
+  <th>Channel</th>
+  <th>Val</th>
+  <th>QHL even</th>
+  <th>QHL odd</th>
+  <th>QHS even</th>
+  <th>QHS odd</th>
+  <th>QLX even</th>
+  <th>QLX odd</th>
+  <th>TAC even</th>
+  <th>TAC odd</th>
+  <th style="text-align: center">Errors (even)</th>
+  <th style="text-align: center">Errors (odd)</th>
+ </tr>
+ {% for x in QHL_even|get2:channel_index %}
+ {% with forloop.counter0 as i %}
+  <tr>
+   <td>{{ channel_index }}</td>
+   <td>{{ i }}</td>
+   <td>{{ QHL_even|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td>{{ QHL_odd|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td>{{ QHS_even|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td>{{ QHS_odd|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td>{{ QLX_even|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td>{{ QLX_odd|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td>{{ TAC_even|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td>{{ TAC_odd|get2:channel_index|get2:i|floatformat:1 }}</td>
+   <td style="text-align: center">
+    {% if errors_even|get2:channel_index|get2:i %}
+    <span class="label label-danger">fail</span>
+    {% else %}
+    <span class="label label-success">pass</span>
+    {% endif %}
+   </td>
+   <td style="text-align: center">
+    {% if errors_odd|get2:channel_index|get2:i %}
+    <span class="label label-danger">fail</span>
+    {% else %}
+    <span class="label label-success">pass</span>
+    {% endif %}
+   </td>
+  </tr>
+ {% endwith %}
+ {% endfor %}
+</table>
+{% endwith %}
+{% endfor %}
+{% endblock %}
+

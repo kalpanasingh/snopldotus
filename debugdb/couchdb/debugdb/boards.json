@@ -1,0 +1,7 @@
+{
+    "map": "function (doc) {
+        if (doc.type == 'board') {
+          emit(doc._id, [doc.status, doc.location, doc.channels]);
+        }
+    }"
+}

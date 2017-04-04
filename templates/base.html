@@ -1,0 +1,126 @@
+{% load url from future %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    {% include "includes.html" %}
+    <title>{% block title %}{% endblock %}</title>
+    <style>{% block style %}{% endblock %}</style>
+    {% block app_header %}{% endblock %}
+  </head>
+  <body style="{% block body_style %}{% endblock %}">
+    <div class="container" style="z-index: 20">
+    <div class="navbar navbar-default navbar-collapse navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="navbar-header">
+       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+       </button>
+       <a class="navbar-brand" href="/">snopl.us</a>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-main-collapse">
+       <ul class="nav navbar-nav">
+        <li class="dropdown">
+         <a id="drop-collab" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Collaboration<b class="caret"></b></a>
+         <ul class="dropdown-menu" role="menu" aria-labelledby="drop-collab">
+          <li><a tabindex="-1" href="/collaboration/people">People</a></li>
+          <!--<li><a tabindex="-1" href="#">Groups</a></li>//-->
+          <li><a tabindex="-1" href="/calls">Phone Calls</a></li>
+          <li><a tabindex="-1" href="/phonelist">Phone Numbers</a></li>
+          <li class="divider"></li>
+          <li class="label label-default">EXTERNAL</li>
+           <li><a tabindex="-1" href="https://www.snolab.ca/snoplus/private/DocDB/cgi/ShowDocument?docid=2761">Organization Chart</a></li>
+          <li><a tabindex="-1" href="/projects">Projects</a></li>
+         </ul>
+        </li>
+        <li class="dropdown">
+         <a id="drop-docs" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Documentation<b class="caret"></b></a>
+         <ul class="dropdown-menu" role="menu" aria-labelledby="drop-docs">
+          <li><a tabindex="-1" href="/docs/rat">RAT Companion</a></li>
+          <li><a tabindex="-1" href="/docs/rat/doxygen">RAT Doxygen</a></li>
+          <li><a tabindex="-1" href="/docs/rat/tasks">RAT Tasks</a></li>
+          <li class="divider"></li>
+          <li class="label label-default">EXTERNAL</li>
+          <li><a tabindex="-1" href="/detector">Detector</a></li>
+          <li><a tabindex="-1" href="https://www.snolab.ca/sno+/TWiki/bin/view">TWiki</a></li>
+          <li><a tabindex="-1" href="https://www.snolab.ca/sno+/private/DocDB/cgi/DocumentDatabase">DocDB</a></li>
+          <li><a tabindex="-1" href="https://www.snolab.ca/snoplus/private/DocDB/cgi/ShowDocument?docid=1462">GitHub Guide</a></li>
+           <li><a tabindex="-1" href="https://docs.google.com/document/d/1LIYUn7rbznv-YoxvZVmsCt0fEGfqfa3CABhg_RWb4gw/edit?usp=sharing">SNO+ Acronym List</a></li>
+         </ul>
+        </li>
+        <li class="dropdown">
+         <a id="drop-analysis" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Analysis<b class="caret"></b></a>
+         <ul class="dropdown-menu" role="menu" aria-labelledby="drop-analysis">
+           <li class="divider"></li>
+           <li class="label label-default">EXTERNAL</li>
+           <li><a tabindex="-1" href="https://www.snolab.ca/snoplus/private/DocDB/cgi/ShowDocument?docid=623">Working Groups</a></li>
+           <li><a tabindex="-1" href="https://www.snolab.ca/snoplus/private/DocDB/cgi/ShowDocument?docid=1970">Review Procedures</a></li>
+           <li><a tabindex="-1" href="https://www.snolab.ca/snoplus/private/DocDB/cgi/ShowDocument?docid=1698">Calibration Run Plan</a></li>
+           <li><a tabindex="-1" href="https://docs.google.com/spreadsheets/d/1T84qYADfNGRkNcfsmmyITTN6OoWWkOsePjAyg-71px8/edit#gid=1826564183">Analysis Task List</a></li>
+         </ul>
+        </li>
+        <li class="dropdown">
+         <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Detector<b class="caret"></b></a>
+         <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+           <li><a tabindex="-1" href="/shift">Shift Reports</a></li>
+           <li><a tabindex="-1" href="/shift/whiteboards">Whiteboards</a></li>
+           <li><a tabindex="-1" href="/shift/schedules">Shift Schedules</a></li>
+           <li><a tabindex="-1" href="/runs">Runs</a></li>
+           <li><a tabindex="-1" href="/oncall">On-Call Expert Contacts</a></li>
+           <li><a tabindex="-1" href="/waterlevel">Waterlevel</a></li>
+           <li><a tabindex="-1" href="/debugdb">debugdb</a></li>
+           <li><a tabindex="-1" href="/network">Network Status</a></li>
+           <li><a tabindex="-1" href="/dbstatus">CouchDB Status</a></li>
+           <li class="divider"></li>
+           <li class="label label-default">EXTERNAL</li>
+           <li><a tabindex="-1" href="/monitoring">Monitoring</a></li>
+           <li><a tabindex="-1" href="http://dashb-fts-transfers.cern.ch/ui/#date.interval=2880&server=(bnl,cmsfts3.fnal.gov,fts.hep.pnnl.gov,fts3-pilot.cern.ch,fts3.cern.ch,lcgfts3.gridpp.rl.ac.uk)&tab=transfer_plots&vo=(snoplus.snolab.ca)">Data Flow Monitoring</a></li>
+           <li><a tabindex="-1" href="http://nu.hep.upenn.edu/snoplus/DAQ">Electronics Website</a></li>
+           <li><a tabindex="-1" href="http://couch.snopl.us/slowcontrol-channeldb/_design/slowcontrol/_show/alarms/">Slow Control Alarms</a></li>
+           <li><a tabindex="-1" href="http://snoplus.phy.queensu.ca/private/cgi-bin/snoplus_shifts.cgi">Detector Shift Sign-Up Page</a><li>
+           <li><a tabindex="-1" href="https://docs.google.com/document/d/1sxW-W1o2Mp8cE8VzPFEvHP0sYAnc-nPCZxw1IScakBg/edit">Detector FAQ</a></li>
+           <li><a tabindex="-1" href="http://snopluspmts.physics.berkeley.edu">ECA and PCA</a></li>
+           <li class="divider"></li>
+           <li class="label label-default">EXTERNAL</li>
+           <li><a tabindex="-1" href="https://www.snolab.ca/snoplus/TWiki/bin/view/Main/WaterFill">Water Fill Schedule</a></li>
+         </ul>
+        </li>
+        <li class="dropdown">
+         <a id="drop-sw" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Software<b class="caret"></b></a>
+         <ul class="dropdown-menu" role="menu" aria-labelledby="drop-sw">
+          <li><a tabindex="-1" href="/code/build">Production Build Testing</a></li>
+          <li><a tabindex="-1" href="/code/ondemand">On-Demand Build Testing</a></li>
+          <li><a tabindex="-1" href="/docs/rat">RAT Companion</a></li>
+          <li><a tabindex="-1" href="/docs/rat/doxygen">RAT Doxygen</a></li>
+          <li><a tabindex="-1" href="/docs/rat/tasks">RAT Tasks</a></li>
+          <li><a tabindex="-1" href="/production/benchmarking/results">Production Benchmarking</a></li>
+          <li class="divider"></li>
+          <li class="label label-default">EXTERNAL</li>
+          <li><a tabindex="-1" href="https://github.com/snoplus">GitHub</a></li>
+          <li><a tabindex="-1" href="http://couch.snopl.us/data-production/_design/dproc/index.html">Data Production</a></li>
+          <li><a tabindex="-1" href="http://couch.snopl.us/data-processing/_design/dproc/files.html">Data Processing</a></li>
+         </ul>
+        </li>
+       </ul>
+       <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+         <a id="dropuser" href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="http://www.gravatar.com/avatar/{{ user.gravatar_hash }}?s=20" align="absmiddle"/> {{ user.username }}<b class="caret"></b></a>
+         <ul class="dropdown-menu" role="menu" aria-labelledby="dropuser">
+          <li><a tabindex="-1" href="/user/{{ user.username }}">Profile</a></li>
+          <li><a tabindex="-1" href="/logout">Log Out</a></li>
+         </ul>
+        </li>
+       </ul>
+      </div>
+     </div>
+    </div>
+    </div>
+    {% block extra_navbar %}{% endblock %}
+    <div id="content">
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>
+

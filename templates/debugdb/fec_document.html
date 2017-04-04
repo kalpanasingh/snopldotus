@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}FEC Document {{ id|slice:"-10:" }} | debugdb | snopl.us{% endblock %}
+{% block content %}
+
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="{% url "debugdb.views.boards" %}">Boards</a></li>
+ <li><a href="{% url "debugdb.views.board" board_id  %}">{{ board_id }}</a></li>
+ <li class="active">FEC Document {{ id|slice:"-10:" }}</li>
+</ol>
+
+<table>
+ <tr>
+  <td rowspan="2" style="font-size: 28pt; padding-right: 15px;">
+   <span class="glyphicon glyphicon-certificate" style="color: #aaa;"></span>
+  </td>
+  <td style="font-size: 28pt">FEC Document <b>{{ id|slice:"-10:" }}</b></td>
+ </tr>
+ <tr>
+  <td style="font-size: 14pt">
+   Generated: {{ timestamp_generated }}<br/>
+  </td>
+ </tr>
+ <tr>
+  <td></td>
+  <td style="font-size: 14pt">
+   ECAL: {{ timestamp_ecal }}
+  </td>
+ </tr>
+</table>
+
+<div class="container-fluid">
+ <div class="row">
+  <div class="col-md-2">
+   <h3>Metadata</h3>
+   <h4>Approved</h4>
+   <table class="table"><tr><td>
+   {% if approved %}
+   <span class="label label-success">yes</span>
+   {% else %}
+   <span class="label label-danger">no</span>
+   {% endif %}
+   </td></tr></table>
+   <h4>ECAL</h4>
+   <table class="table"><tr><td>
+    <a href="{% url "debugdb.views.ecal" ecal_id %}">{{ ecal_id|slice:"-10:" }}</a>
+   </td></tr></table>
+   <h4>Configuration</h4>
+   <table class="table table-condensed">
+    <tr>
+     <th>Crate/Slot</th>
+     <td><a href="{% url "debugdb.views.crate" crate %}">{{ crate }}</a> / {{ card }}</td>
+    </tr>
+    <tr>
+     <th>FEC ID</th>
+     <td><a href="{% url "debugdb.views.board" board_id %}">{{ board_id }}</a></td>
+    </tr>
+    <tr>
+     <th>DBs</th>
+     <td>
+      <ol start="0" style="padding: 0; padding-left: 2.5ex">
+       <li><a href="{% url "debugdb.views.board" ids.db0 %}">{{ ids.db0 }}</a></li>
+       <li><a href="{% url "debugdb.views.board" ids.db1 %}">{{ ids.db1 }}</a></li>
+       <li><a href="{% url "debugdb.views.board" ids.db2 %}">{{ ids.db2 }}</a></li>
+       <li><a href="{% url "debugdb.views.board" ids.db3 %}">{{ ids.db3 }}</a></li>
+      </ol>
+     </td>
+    </tr>
+    <tr>
+     <th>PMTIC ID</th>
+     <td><a href="{% url "debugdb.views.board" ids.hv %}">{{ ids.hv }}</a></td>
+    </tr>
+   </table>
+   <h4>Relays</h4>
+   <table class="table table-condensed">
+    {% for relay in relay_on %}
+    <tr>
+     <th style="width: 1%">{{ forloop.counter0 }}</th>
+     <td>
+      {% if relay %}
+      <span class="label label-success">on</span>
+      {% else %}
+      <span class="label label-danger">off</span>
+      {% endif %}
+     </td>
+    </tr>
+    {% endfor %}
+   </table>
+   <h4>Tests</h4>
+   <table class="table table-condensed">
+    {% for name, t in test.items %}
+    <tr>
+     <td style="width: 1%; text-align: center">
+      {% if t.pass %}
+      <span class="label label-success">pass</span>
+      {% else %}
+      <span class="label label-danger">fail</span>
+      {% endif %}
+     </td>
+     <td style="text-align: left">
+      <a href="{% url "debugdb.views.test" t.test_id %}">{{ name }}</a>
+     </td>
+    </tr>
+    {% endfor %}
+   </table>
+  </div>
+  <div class="col-md-10">
+   <h3>Problems</h3>
+   <table class="table">
+    <tr>
+     <th></th>
+     {% for i in 32|get_range %}
+     <th style="text-align: left">{{ forloop.counter0 }}</th>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>Channel</th>
+     {% for ch in channel.problem %}
+     <td style="text-align: left">
+      {{ ch }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>PMT</th>
+     {% for pmt in tube.problem %}
+     <td style="text-align: left">
+      {{ pmt }}
+     </td>
+     {% endfor %}
+    </tr>
+   </table>
+
+   <h3>Hardware Settings</h3>
+   <table class="table table-condensed table-striped">
+    <tr>
+     <th style="width: 1%; white-space: nowrap;">Vint DAC</th>
+     <td>{{ hw.vint }}</td>
+    </tr>
+    <tr>
+     <th style="width: 1%; white-space: nowrap;">HVref DAC</th>
+     <td>{{ hw.hvref }}</td>
+    </tr>
+    <tr>
+     <th style="width: 1%; white-space: nowrap;">TCMOS Vmax</th>
+     <td>{{ hw.tcmos.vmax }}</td>
+    </tr>
+    <tr>
+     <th style="width: 1%; white-space: nowrap;">TCMOS VTACref</th>
+     <td>{{ hw.tcmos.vtacref }}</td>
+    </tr>
+    <tr>
+     <th style="width: 1%; white-space: nowrap;">TCMOS ISETA</th>
+     <td>{{ hw.tcmos.iseta.0 }} {{ hw.tcmos.iseta.1 }}</td>
+    </tr>
+    <tr>
+     <th style="width: 1%; white-space: nowrap;">TCMOS ISETM</th>
+     <td>{{ hw.tcmos.isetm.0 }} {{ hw.tcmos.isetm.1 }}</td>
+    </tr>
+   </table>
+
+   <h4>Channel Settings</h4>
+   <table class="table table-condensed table-striped">
+    <tr>
+     <th></th>
+     <th></th>
+     {% for i in 32|get_range %}
+     <th style="text-align: left">{{ forloop.counter0 }}</th>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th rowspan="2">NHIT100</th>
+     <th>Mask</th>
+     {% for x in hw.tr100.mask %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>Delay</th>
+     {% for x in hw.tr100.delay %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th rowspan="3">NHIT20</th>
+     <th>Mask</th>
+     {% for x in hw.tr20.mask %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>Delay</th>
+     {% for x in hw.tr20.delay %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>Width</th>
+     {% for x in hw.tr20.width %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th rowspan="2">VBAL</th>
+     <th>Low</th>
+     {% for x in hw.vbal.0 %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>High</th>
+     {% for x in hw.vbal.1 %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th rowspan="2">VTHR</th>
+     <th>Zero</th>
+     {% for x in hw.vthr_zero %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>Threshold</th>
+     {% for x in hw.vthr %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>SCMOS</th>
+     <th>Value</th>
+     {% for x in hw.scmos %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>TCMOS</th>
+     <th>TAC trim</th>
+     {% for x in hw.tcmos.tac_trim %}
+     <td style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th rowspan="5">Tdisc</th>
+     <th>Chip</th>
+     {% for i in 8|get_range %}
+     <th colspan="4">
+      {{ i }}
+     </th>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>VSI</th>
+     {% for x in hw.tdisc.vsi %}
+     <td colspan="4" style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>VLI</th>
+     {% for x in hw.tdisc.vli %}
+     <td colspan="4" style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>RMP</th>
+     {% for x in hw.tdisc.rmp %}
+     <td colspan="4" style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+    <tr>
+     <th>RMPUP</th>
+     {% for x in hw.tdisc.rmpup %}
+     <td colspan="4" style="text-align: left">
+      {{ x }}
+     </td>
+     {% endfor %}
+    </tr>
+   </table>
+  </div>
+ </div>
+</div>
+
+{% endblock %}
+

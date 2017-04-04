@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}debugdb | snopl.us{% endblock %}
+{% block content %}
+
+<script src="{% static 'js/jquery.flot.min.js' %}"></script>
+<script src="{% static 'js/jquery.flot.pie.min.js' %}"></script>
+<style>
+td.legendLabel {
+  font-size: 7pt;
+}
+.pie-chart {
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+</style>
+
+<h1>debug<b>db</b></h1>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-3">
+      <h3>&nbsp;</h3>
+      <div class="panel-group" id="accordion" style="width: 100%">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapse-boards">
+                Boards
+              </a>
+            </h4>
+          </div>
+          <div id="collapse-boards" class="panel-collapse collapse in">
+            <div class="panel-body" style="text-align: center">
+             <p>
+              <form id="form-goto-board" action="#">
+               Go to board: <input type="text" size="3"/>
+               <button type="submit">&#187;</button>
+              </form>
+             </p>
+             <p style="font-weight: bold"><a href="{% url "debugdb.views.boards" %}">View All</a></p>
+             <p style="font-weight: bold"><a href="{% url "debugdb.views.spares" %}">View Spares</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapse-crates">
+                Crates
+              </a>
+            </h4>
+          </div>
+          <div id="collapse-crates" class="panel-collapse collapse">
+            <div class="panel-body" style="text-align: center">
+             <p>
+              <form id="form-goto-crate" action="#">
+               Go to crate: <input type="text" size="3"/>
+               <button type="submit">&#187;</button>
+              </form>
+             </p>
+             <p style="font-weight: bold"><a href="{% url "debugdb.views.detector" %}">Detector View</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapse-tests">
+                Tests
+              </a>
+            </h4>
+          </div>
+          <div id="collapse-tests" class="panel-collapse collapse">
+            <div class="panel-body" style="text-align: center">
+             <p style="font-weight: bold"><a href="{% url "debugdb.views.ecals" %}">ECALs</a></p>
+             <p style="font-weight: bold"><a href="{% url "debugdb.views.test_names" %}">Browse by Name</a></p>
+             <p style="font-weight: bold"><a href="{% url "debugdb.views.tests" %}">View all</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <h3>
+        Recent Tests
+        <span style="float: right"><a href="{% url "debugdb.views.tests" %}">View All</a></span>
+      </h3>
+      <table class="table table-striped table-condensed" style="border: solid 1px #ddd">
+       <tr>
+         <th>Type</th>
+         <th style="text-align:center">Status</th>
+         <th style="text-align:center">Location</th>
+         <th>Date</th>
+       </tr>
+       {% for row in tests %}
+       {% with row.value as test %}
+       <tr>
+        <td><a href="{% url "debugdb.views.test" row.id %}">{{ test.type }}</a></td>
+        <td style="text-align:center">
+         {% if test.pass %}
+         <span class="label label-success">pass</span>
+         {% else %}
+         <span class="label label-danger">fail</span>
+         {% endif %}
+        </td>
+        <td style="text-align:center">{{ test.config.loc }}</td>
+        <td>{{ test.short_created }}</td>
+       </tr>
+       {% endwith %}
+       {% endfor %}
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12" style="text-align: center">
+     <div class="well well-sm">
+        <div style="display: inline-block;">
+         <div id="loc-pie" class="pie-chart" style="width: 170px; height: 85px; display: inline-block"></div>
+         <script>
+          {% with stats|get2:"locations" as b %}
+          data = [
+            { label: 'Penn {{ b|get2:"penn" }}', data: {{ b|get2:"penn" }}, color: 'blue' },
+            { label: 'Surface {{ b|get2:"surface" }}', data: {{ b|get2:"surface" }}, color: 'silver' },
+            { label: 'UG {{ b|get2:"underground" }}', data: {{ b|get2:"underground" }}, color: 'brown' },
+            { label: 'Unknown {{ b|get2:"unknown" }}', data: {{ b|get2:"unknown" }}, color: 'white' },
+          ]
+          {% endwith %}
+          $.plot($('#loc-pie'), data, {
+            series: { pie: { show: true, stroke: { width: 0 }}},
+            legend: { backgroundOpacity: 0 }
+          });
+         </script>
+         <div style="font-weight: bold; text-align: center">Locations</div>
+        </div>
+        <div style="display: inline-block;">
+         <div id="boards-pie" class="pie-chart" style="width: 170px; height: 85px; display: inline-block"></div>
+         <script>
+          {% with stats|get2:"boards" as b %}
+          data = [
+            { label: 'Gold {{ b|get2:"gold" }}', data: {{ b|get2:"gold" }}, color: 'gold' },
+            { label: 'Silver {{ b|get2:"silver" }}', data: {{ b|get2:"silver" }}, color: 'silver' },
+            { label: 'Bad {{ b|get2:"bad" }}', data: {{ b|get2:"bad" }}, color: 'red' },
+            { label: 'Unknown {{ b|get2:"none" }}', data: {{ b|get2:"none" }}, color: 'white' },
+            { label: 'Bone {{ b|get2:"bone" }}', data: {{ b|get2:"bone" }}, color: 'black' },
+          ]
+          {% endwith %}
+          $.plot($('#boards-pie'), data, {
+            series: { pie: { show: true, stroke: { width: 0 }}},
+            legend: { backgroundOpacity: 0 }
+          });
+         </script>
+         <div style="font-weight: bold; text-align: center">All Boards</div>
+        </div><nobr/>
+        <div style="display: inline-block;">
+         <div id="fecs-pie" class="pie-chart" style="width: 170px; height: 85px; display: inline-block"></div>
+         <script>
+          {% with stats|get2:"fecs" as b %}
+          data = [
+            { label: 'Gold {{ b|get2:"gold" }}', data: {{ b|get2:"gold" }}, color: 'gold' },
+            { label: 'Silver {{ b|get2:"silver" }}', data: {{ b|get2:"silver" }}, color: 'silver' },
+            { label: 'Bad {{ b|get2:"bad" }}', data: {{ b|get2:"bad" }}, color: 'red' },
+            { label: 'Unknown {{ b|get2:"none" }}', data: {{ b|get2:"none" }}, color: 'white' },
+            { label: 'Bone {{ b|get2:"bone" }}', data: {{ b|get2:"bone" }}, color: 'black' },
+          ]
+          {% endwith %}
+          $.plot($('#fecs-pie'), data, {
+            series: { pie: { show: true, stroke: { width: 0 }}},
+            legend: { backgroundOpacity: 0 }
+          });
+         </script>
+         <div style="font-weight: bold; text-align: center">FECs</div>
+        </div>
+        <div style="display: inline-block;">
+         <div id="dbs-pie" class="pie-chart" style="width: 170px; height: 85px; display: inline-block"></div>
+         <script>
+          {% with stats|get2:"dbs" as b %}
+          data = [
+            { label: 'Gold {{ b|get2:"gold" }}', data: {{ b|get2:"gold" }}, color: 'gold' },
+            { label: 'Silver {{ b|get2:"silver" }}', data: {{ b|get2:"silver" }}, color: 'silver' },
+            { label: 'Bad {{ b|get2:"bad" }}', data: {{ b|get2:"bad" }}, color: 'red' },
+            { label: 'Unknown {{ b|get2:"none" }}', data: {{ b|get2:"none" }}, color: 'white' },
+            { label: 'Bone {{ b|get2:"bone" }}', data: {{ b|get2:"bone" }}, color: 'black' },
+          ]
+          {% endwith %}
+          $.plot($('#dbs-pie'), data, {
+            series: { pie: { show: true, stroke: { width: 0 }}},
+            legend: { backgroundOpacity: 0 }
+          });
+         </script>
+         <div style="font-weight: bold; text-align: center">DBs</div>
+        </div>
+     </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('#form-goto-board').on('submit', function(e) {
+ e.preventDefault();
+ window.location.href = '/debugdb/board/' + $(e.currentTarget).find('input').val();
+});
+$('#form-goto-crate').on('submit', function(e) {
+ e.preventDefault();
+ window.location.href = '/debugdb/crate/' + $(e.currentTarget).find('input').val();
+});
+</script>
+{% endblock %}
+

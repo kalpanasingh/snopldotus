@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Spare Boards | debugdb | snopl.us{% endblock %}
+{% block content %}
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="{% url "debugdb.views.index" %}">debugdb</a></li>
+ <li><a href="{% url "debugdb.views.boards" %}">Boards</a></li>
+ <li class="active">Spares</li>
+</ol>
+
+<h1>Spare Boards</h1>
+
+<table style="width: 1%" class="table table-condensed">
+ {% for type, boards in spares.items %}
+ <tr><td colspan="3"> <h3>{{ type }}</h3> </td></tr>
+ <tr>
+  <th>ID</th>
+  <th style="text-align:center">Location</th>
+  <th style="text-align:center">Status</th>
+ </tr>
+ {% regroup boards|dictsort:"status" by status as status_group %}
+ {% for group in status_group %}
+ {% for board in group.list %}
+  <tr>
+   <th><a href="{% url "debugdb.views.board" board.id %}">{{ board.id }}</a></th>
+   <td style="text-align:center">{{ board.location }}</td>
+   <td style="text-align:center">
+    {% with board.status as status %}
+    {% include "debugdb/components/board_badge.html" %}
+    {% endwith %}
+   </td>
+  </tr>
+  </tr>
+ {% endfor %}
+ {% endfor %}
+ {% endfor %}
+</table>
+
+{% endblock %}
+

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}DB Status | snopl.us{% endblock %}
+{% block content %}
+<meta http-equiv="refresh" content="15"/>
+<h1>Database Status</h1>
+<h2>HAProxy</h2>
+{% for server in haproxy_servers %}
+<h3>{{ server.name }} ({{ server.url }})</h3>
+{% if server.error %}<div class="alert alert-danger">{{ server.error }}</div>{% endif %}
+<table class="table table-striped table-condensed">
+<tr>
+ <th>State</th>
+ <th>Name</th>
+ <th>Service</th>
+ <th>Bytes In</th>
+ <th>Bytes Out</th>
+ <th>Primary</th>
+ <th>Backup</th>
+ <th>Time</th>
+ <th>Check</th>
+</tr>
+{% for row in server.rows %}
+<tr class={% if row.status == "OPEN" or row.status == "UP"%}"success"{% else %}"danger"{% endif %}>
+ <td>{{ row.status }}</td>
+ <td>{{ row.name }}</td>
+ <td>{{ row.service }}</td>
+ <td>{{ row.bytes_in | filesizeformat }}</td>
+ <td>{{ row.bytes_out | filesizeformat }}</td>
+ <td>{{ row.active }}</td>
+ <td>{{ row.backup }}</td>
+ <td>{{ row.uptime }}</td>
+ <td>{{ row.check }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endfor %}
+
+<h2>Postgres Streaming</h2>
+{% if pg_error %}
+<div class="alert alert-danger">{{ pg_error }}</div>
+{% else %}
+<table class="table table-striped table-condensed">
+<tr>
+ <th>Client</th>
+ <th>State</th>
+ <th>Byte Delta</th>
+ <th>Sync State</th>
+</tr>
+{% for row in pg_status %}
+<tr class={% if row.byte_diff < 1000000 %}"success"{% else %}"danger"{% endif %}>
+ <td>{{ row.client_addr }}</td>
+ <td>{{ row.state }}</td>
+ <td>{{ row.byte_diff | filesizeformat }}</td>
+ <td>{{ row.sync_state }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+<h2>CouchDB Replications</h2>
+{% for server in couchdb_servers %}
+<h3>
+{{ server.name }} ({{ server.url }})
+{% if user.is_superuser %}
+<span style="float: right; vertical-align: top; font-size: 8pt">
+ <a href="#" class="kick-replications" data-server="{{ server.name }}" style="text-decoration: none;">
+  <div class="well well-sm">
+   <span class="glyphicon glyphicon-repeat"
+         style="color: gray; font-size: 12px;"
+         title="Restart failed replications"></span>
+  </div>
+ </a>
+</span>
+{% endif %}
+</h3>
+{% if server.error %}<div class="alert alert-danger">{{ server.error }}</div>{% endif %}
+<table class="table table-striped table-condensed">
+<tr>
+ <th>State</th>
+ <th>ID</th>
+ <th>Source</th>
+ <th>Target</th>
+ <th>Updated</th>
+</tr>
+{% for replication in server.replications %}
+<tr class={% if replication.replication_state == "triggered" %}"success"{% else %}"danger"{% endif %}>
+ <td>{{ replication.replication_state }}</td>
+ <td>{{ replication.id }}</td>
+ <td>{{ replication.source }}</td>
+ <td>{{ replication.target }}</td>
+ <td>{{ replication.age }}</td>
+</tr>
+{% endfor %}
+</table>
+{% endfor %}
+
+{% if user.is_superuser %}
+<script>
+$('.kick-replications').on('click', function(e) {
+  e.preventDefault();
+  var server = $(this).attr('data-server');
+  $.ajax({
+    url: '/kick-replications/' + server,
+    type: 'GET',
+    success: function(data, textStatus, jqXHR) {
+      data = $.parseJSON(data);
+      if (data.restarted.length == 0) {
+        alert('No replications to restart.');
+      }
+      else if (data.errors.length == 0) {
+        alert('Restarted all stopped replications.');
+      }
+      else {
+        alert('Failed to restart replications: ' + data.errors.join());
+      }
+    },
+    error: function(e) {
+      alert('Error: Failed to restart one or more replications.');
+    }
+  });
+});
+</script>
+{% endif %}
+{% endblock %}
+

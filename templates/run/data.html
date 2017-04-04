@@ -1,0 +1,67 @@
+{% load filters %}
+<div class="row">
+  <div class="col-md-5">
+    {% if data.l1_files|length %}
+    <h3>L1 data:</h3>
+    {% for row in data.l1_files %}
+    <h4>{% if row.key.2 == "log" %}Log{% else %}Subrun {{ row.key.2 }}{% endif %}</h4>
+    <table class="table table-condensed table-striped" style="margin: 10px">
+      <tr>
+        <th>Location</th>
+        <td>{% if row.value.0 %}Grid (<a href="http://couch.snopl.us/data-processing/_design/dflow/doc.html?id={{ row.id }}#">details</a>){% else %}Buffer{% endif %}</td>
+      </tr>
+      <tr>
+        <th>File name</th>
+        <td>{{ row.value.1 }}</td>
+      </tr>
+      <tr>
+        <th>Grid ID</th>
+        <td>{{ row.value.0 }}</td>
+      </tr>
+      <tr>
+        <th>Checksum</th>
+        <td>{{ row.value.2 }}</td>
+      </tr>
+      <tr>
+        <th>Size (B)</th>
+        <td>{{ row.value.3 }}</td>
+      </tr>
+    </table>
+    {% endfor %}
+    {% else %}
+    <h3>No L1 data available/on grid</h3>
+    {% endif %}
+  </div>
+  <div class="col-md-5">
+    {% if data.l2_files|length %}
+    <h3>L2 data:</h3>
+    {% for row in data.l2_files %}
+    <h4>Subrun {{ row.key.2 }}</h4>
+    <table class="table table-condensed table-striped" style="margin: 10px">
+      <tr>
+        <th>Location</th>
+        <td>{% if row.value.0 %}Grid (<a href="http://couch.snopl.us/data-processing/_design/dflow/doc.html?id={{ row.id }}#">details</a>){% else %}Buffer{% endif %}</td>
+      </tr>
+      <tr>
+        <th>File name</th>
+        <td>{{ row.value.1 }}</td>
+      </tr>
+      <tr>
+        <th>Grid ID</th>
+        <td>{{ row.value.0 }}</td>
+      </tr>
+      <tr>
+        <th>Checksum</th>
+        <td>{{ row.value.2 }}</td>
+      </tr>
+      <tr>
+        <th>Size (B)</th>
+        <td>{{ row.value.3 }}</td>
+      </tr>
+    </table>
+    {% endfor %}
+    {% else %}
+    <h3>No L2 data available/on grid</h3>
+    {% endif %}
+  </div>
+</div>

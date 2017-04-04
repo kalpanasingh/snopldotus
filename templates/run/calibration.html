@@ -1,0 +1,20 @@
+{% load filters %}
+<h3>PMT Calibration</h3>
+<table class="table table-condensed table-striped" style="margin: 10px">
+  <tr>
+    <th>Run range</th>
+    <td>{{ calibration.run_range }}</td>
+  </tr>
+  <tr>
+    <th>Mean HHP</th>
+    <td>{{ calibration.mean_hhp }}</td>
+  </tr>
+  <tr>
+    <th>Min HHP</th>
+    <td>{{ calibration.min_hhp }}</td>
+  </tr>
+  <tr>
+    <th>Max HHP</th>
+    <td>{{ calibration.max_hhp }}</td>
+  </tr>
+</table>

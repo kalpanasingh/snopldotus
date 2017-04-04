@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% block title %}Production benchmarking | snopl.us{% endblock %}
+{% block style %}{% include "production/style.css" %}{% endblock %}
+{% block extra_navbar %}
+{% include "production/nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-heading">Benchmarking request (number): RAT {{ rat_version }}</div>
+  <form action="{% url 'production.views.production_request' %}" method="get"
+        enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <div class="panel-body">
+      <input type="hidden" name="rat_version" value="{{ rat_version }}">
+    </div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Phase</th>
+          <th>Macro</th>
+          <th>Size / event (kB)</th>
+          <th>Time / event (s)</th>
+          <th># / run</th>
+          <th>Request</th>
+          <th>Runs</th>
+          <th>Templates</th>
+        </tr>
+      </thead>
+      {% for form in formset %}
+      <tr id="{{ form.prefix }}-row">
+        <input type="hidden" id="{{ form.prefix }}-macro_key" name="macro_key" value="{{ form.prefix }}"/>          
+        <td>
+          <button type="button" id="{{ form.prefix }}-add" class="btn_add">
+            <span class="glyphicon glyphicon-plus-sign btn-success"></span>
+          </button>
+          <button type="button" id="{{ form.prefix }}-remove" class="btn_remove">
+            <span class="glyphicon glyphicon-minus-sign btn-danger"></span>
+          </button>
+        </td>
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        {% for value in form.hidden_tabs %}
+        <td>{{ value }}</td>
+        {% endfor %}
+        {% for visible in form.visible_fields %}
+        {% if not visible.is_template %}
+        <td>
+          {{ visible.errors.as_ul }}
+          {{ visible }}
+        </td>
+        {% endif %}
+        {% endfor %}
+        <td>
+          <table class="table">
+            {% for template in form.template_fields %} 
+            <input type="hidden" name="{{ form.prefix }}_template_names" value="{{ template.name }}"/>
+            {{ template.errors.as_ul }}
+            <tr>
+              <td>{{ template.name }}:</td>
+              <td>{{ template }}
+            </td></tr>
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <button class="btn btn-primary glyphicon glyphicon-download" type="submit" name="submit" value="number-JSON">
+      JSON
+    </button>
+    <button class="btn btn-primary glyphicon glyphicon-download" type="submit" name="submit" value="number-CSV">
+      CSV
+  </button>
+  </form>
+</div>
+<script type="text/javascript">
+
+  function update_request(event) {
+      var target_id = event.target.id;
+      var row_id = target_id.split("-", 1)[0]
+      // Can use event.target.value for value (but unsure about paste/keyup if reintroduced)
+      var events = Math.floor($('#'+target_id)[0].value);
+      var ev_per_run = $('#'+row_id+'-ev_per_run')[0].value;
+      var n_runs = Math.floor(events / ev_per_run);
+      if(events % ev_per_run > 0.5) n_runs += 1;
+      $('#'+row_id+'-n_runs')[0].value = n_runs.toFixed(0);
+  }
+
+  function add_row(event, counter) {
+      var id_prefix = event.target.id.split("-", 1)[0];
+      var new_prefix = "clone" + counter;
+      var row_id = id_prefix + "-row";
+      var new_row = $("#"+row_id).clone();
+      new_row[0].id = "clone" + counter + row_id; // this is going to add possibility of clone_clone_clone_... etc
+      // Also need to update ALL the IDS of the inputs and buttons
+      new_row.find("input").each( function() {
+          this.id = new_prefix + this.id;
+          // There is a hidden input that informs which rows are correlated...
+          if(this.id.match('-macro_key'))
+              this.value = new_prefix + id_prefix;
+          else
+              this.name = new_prefix + this.name;
+      });
+      new_row.find("button").each( function() {
+          this.id = new_prefix + this.id;
+      });
+      $(new_row).insertAfter( $("#" + row_id ).closest( "tr" ) );
+      // Update the total number of forms for the formset
+      var numForms = parseInt($('#id_form-TOTAL_FORMS').val());
+      $("#id_form-TOTAL_FORMS").val((numForms+1).toString());
+  }
+  
+  function remove_row(event) {
+      var row_id = event.target.id.split("-", 1)[0];
+      var tr_id = row_id + "-row";
+      $('#'+tr_id).remove();
+      // Update the total number of forms for the formset
+      var numForms = parseInt($('#id_form-TOTAL_FORMS').val());
+      $("#id_form-TOTAL_FORMS").val((numForms-1).toString());
+  }
+
+
+  $(document).ready(function() {
+
+      row_id_ctr = 0; // increment with each new row
+
+      $("body").on("change input", ".request_tg", function(event) {
+          update_request(event);
+      });
+
+      $("body").on("click", ".btn_add", function(event) {
+          row_id_ctr += 1;
+          add_row(event, row_id_ctr);
+      });
+
+      $("body").on("click", ".btn_remove", function(event) {
+          remove_row(event);
+      });
+
+  });
+</script>
+{% endblock %}
+

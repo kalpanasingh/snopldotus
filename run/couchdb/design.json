@@ -1,0 +1,1 @@
+{"_id":"_design/snopldotus","language":"javascript","views":{"index":{"map":"function(doc) {    if (doc.doc_type === 'run') {        emit(doc.run_number, doc);    }}"},"config":{"map":"function(doc) {  if (doc.doc_type != 'run') {    emit(null, doc)  }}"}}}

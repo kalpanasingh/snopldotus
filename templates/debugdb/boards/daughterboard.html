@@ -1,0 +1,24 @@
+{% extends 'debugdb/board.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block channels %}
+<br/>
+<h4>Channels</h4>
+<table class="table table-striped table-condensed">
+ {% for channel in channels %}
+ <tr>
+  <th style="width: 1%; text-align: right">{{ forloop.counter0 }}</th>
+  <td>
+   {% with forloop.counter0 as index %}
+   {% with "channel" as channel_type_title %}
+   {% with "channels" as channel_type %}
+   {% include "debugdb/components/channel.html" %}
+   {% endwith %}
+   {% endwith %}
+   {% endwith %}
+  </td>
+  {% endfor %}
+ </tr>
+</table>
+{% endblock %}
+

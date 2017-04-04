@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block app_header %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/aqua_nu_buddy.css' %}">
+{% endblock %}
+{% block title %}Main | snopl.us{% endblock %}
+{% block content %}
+<div class="background water">
+  <div id="ducky" class="duckie"></div>
+  <div class="foreground"></div>
+</div>
+<script src="{% static 'js/aqua_nu_buddy.js' %}"></script>
+{% endblock %}
+

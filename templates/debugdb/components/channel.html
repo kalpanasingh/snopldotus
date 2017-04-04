@@ -1,0 +1,40 @@
+<input name="{{id}}-{{ channel_type }}-{{ index }}" type="checkbox"{% if channel.ok %} checked {% endif %}/>
+
+{% if channel.tags %}
+<button
+  type="button"
+  style="color: #999; position: relative; top: 4px; padding: 0"
+  class="btn btn-link bs-popover"
+  data-toggle="popover"
+  data-placement="right"
+  title="Channel Tags
+         <button style='padding: 0; float: right'
+                 class='btn btn-link channel-tag-add'
+                 data-board='{{ id }}'
+                 data-title='{{ channel_type_title }}'
+                 data-attribute='{{ channel_type }}'
+                 data-index='{{ index }}'>
+          <span style='color: #999; position: relative; top: 3px'
+                class='glyphicon glyphicon-plus-sign'></span>
+         </button>"
+  data-content="{% for tag in channel.tags|slice:"::-1" %}
+                {% include "debugdb/components/channel_tag.html" %}
+                {% endfor %}">
+ {% with channel.tags|last as lasttag %}
+ {% with lasttag.status as status %}
+ {% include "debugdb/components/tag_badge.html" %}
+ {% endwith %}
+ {% endwith %}
+</button>
+{% else %}
+ <button style="padding: 0"
+         class="btn btn-link channel-tag-add"
+         data-board="{{ id }}"
+         data-title="{{ channel_type_title }}"
+         data-attribute="{{ channel_type }}"
+         data-index="{{ index }}">
+  <span style="color: #999; position: relative; top: 3px"
+        class="glyphicon glyphicon-plus-sign"></span>
+ </button>
+{% endif %}
+

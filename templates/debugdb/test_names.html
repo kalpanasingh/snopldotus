@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% block title %}Tests | debugdb | snopl.us{% endblock %}
+{% block content %}
+
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="/debugdb">debugdb</a></li>
+ <li class="active">Test names</li>
+</ol>
+
+<table style="width: 1%" class="table table-striped table-condensed">
+ <tr>
+  <th>Name</th>
+  <th style="text-align:center">Count</th>
+ </tr>
+ {% for test in tests %}
+  <tr>
+   <th><a href="{% url "debugdb.views.tests" test.key %}">{{ test.key }}</a></th>
+   <td style="text-align:center">{{ test.value }}</td>
+  </tr>
+ {% endfor %}
+</table>
+
+{% endblock %}
+

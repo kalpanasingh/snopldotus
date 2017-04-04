@@ -1,0 +1,203 @@
+{% load filters %}
+<table width="100%">
+ <tr>
+  <td colspan="2" width="50%" style="vertical-align: top">
+    <div class="well well-sm" style="background: white">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <h3>Deck DAQ Rack</h3>
+            <div class="well well-sm" style="margin-left: 5%; margin-right:10%; background: white">
+              <table class="table">
+                <tr>
+                  <td colspan="2" style="background: #eee; height: 1em; border-bottom: solid 5px white;">
+                    <b>XL3 Switch</b>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2" style="background: #eee; height: 1em; border-bottom: solid 5px white;">
+                    <b>XL3 Switch Spare</b>
+                  </td>
+                </tr>
+
+                {% with host='snotsw2.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                <tr>
+                  <td colspan="2" style="background: #eee; height: 3em; border-bottom: solid 5px white;">
+                    <b style="float: right">Cable Tray</b>
+                  </td>
+                </tr>
+
+                {% with host='snotsw3.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                <tr>
+                  <td colspan="2" style="background: #eee; height: 1em; border-bottom: solid 5px white;">
+                    <b>&nbsp</b>
+                  </td>
+                </tr>
+
+                {% with host='tps-deck1.sp.snolab.ca' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                <tr>
+                  <td colspan="2" style="background: #eee; height: 1em; border-bottom: solid 5px white;">
+                    <b style="float: right">PDU</b>
+                  </td>
+                </tr>
+
+                {% with host='feug.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='snug1.sp.snolab.ca' imm='snug1-imm.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host imm_status=nagios_hosts_dict|get2:imm %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='minard.sp.snolab.ca' imm='minard-imm.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host imm_status=nagios_hosts_dict|get2:imm %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='dbug.sp.snolab.ca' imm='dbug-imm.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host imm_status=nagios_hosts_dict|get2:imm %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='buffer1.sp.snolab.ca' imm='buffer1-imm.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host imm_status=nagios_hosts_dict|get2:imm %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                <tr style="margin:5px;">
+                  {% with host='builder1.sp.snolab.ca' height='3em' %}
+                  {% with status=nagios_hosts_dict|get2:host %}
+                  <td class="{% if status.state == 0%}success{% else %}danger{% endif %}" style="height: 9em; border-bottom: solid 5px white; width: 50%">
+                    <b>{{ host }}</b><br/>
+                    <span style="font-size: 9pt;">{{ status.address }}</span>
+                  </td>
+                  {% endwith %}
+                  {% endwith %}
+                  <td style="height: 9em; background: #eee; border-bottom: solid 5px white; border-left: solid 5px white; width: 50%">
+                    <b>builder1 RAID</b>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td colspan="2" style="background: #eee; height: 1em; border-bottom: solid 5px white;">
+                    <b style="float: right">Shelf</b>
+                  </td>
+                </tr>
+
+                <tr style="margin:5px;">
+                  {% with host='daq2.sp.snolab.ca' %}
+                  {% with status=nagios_hosts_dict|get2:host %}
+                  <td class="{% if status.state == 0%}success{% else %}danger{% endif %}" style="height: 18em; border-bottom: solid 5px white; width: 50%">
+                    <b>{{ host }}</b><br/>
+                    <span style="font-size: 9pt;">{{ status.address }}</span>
+                  </td>
+                  {% endwith %}
+                  {% endwith %}
+                  {% with host='daq1.sp.snolab.ca' %}
+                  {% with status=nagios_hosts_dict|get2:host %}
+                  <td class="{% if status.state == 0%}success{% else %}danger{% endif %}" style="height: 18em; border-bottom: solid 5px white; border-left: solid 5px white; width: 50%">
+                    <b>{{ host }}</b><br/>
+                    <span style="font-size: 9pt;">{{ status.address }}</span>
+                  </td>
+                  {% endwith %}
+                  {% endwith %}
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+  <td width="50%" style="vertical-align: top">
+    <div class="well well-sm" style="background: white">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <h3>Power Control</h3>
+            <div class="well well-sm" style="margin-left: 5%; margin-right:10%; background: white">
+              <table class="table">
+                {% with host='adam1.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='adam2.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+              </table>
+            </div>
+
+            <h3>ELLIE Rack</h3>
+            <div class="well well-sm" style="margin-left: 5%; margin-right:10%; background: white">
+              <table class="table">
+                {% with host='tps-ellie1.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='snodrop.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+              </table>
+            </div>
+
+            <h3>Cameras</h3>
+            <div class="well well-sm" style="margin-left: 5%; margin-right:10%; background: white">
+              <table class="table">
+                {% with host='cam-deck-north.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='cam-deck-south.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='cam-timingrack.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+ </tr>
+</table>
+

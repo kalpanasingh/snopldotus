@@ -1,0 +1,30 @@
+{% extends 'debugdb/test.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block results %}
+
+<h3>Results</h3>
+
+<table class="table table-striped table-condensed">
+ <tr>
+  <th style="width: 1%; white-space: nowrap"></th>
+  <th style="text-align: center">Errors</th>
+  <th>Counts - Peds</th>
+ </tr>
+ {% for channel in channels %}
+ <tr>
+  <td>{{ channel.id }}</td>
+  <td style="text-align: center">
+   {% if channel.errors %}
+   <span class="label label-danger">fail</span>
+   {% else %}
+   <span class="label label-success">pass</span>
+   {% endif %}
+  </td>
+  <td>{{ channel.count_minus_peds }}</td>
+ </tr>
+ {% endfor %}
+</table>
+
+{% endblock %}
+

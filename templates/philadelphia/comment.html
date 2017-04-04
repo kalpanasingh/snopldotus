@@ -1,0 +1,12 @@
+<div style="margin-bottom: 10px" class="well">
+ <table width="100%">
+  <tr>
+   <td width="100%" style="font-size: 14pt; font-weight: bold;">{{ comment.name }}</td>
+   <td class="phl-comment-created"
+       style="white-space: nowrap; font-size: 7pt; vertical-align: bottom;">{{ comment.created }}</td>
+  </tr>
+ </table>
+ <div style="margin-top: 10px">
+ {{ comment.text|safe }}
+ </div>
+</div>

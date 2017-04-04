@@ -1,0 +1,48 @@
+<a id="comments"></a>
+<h1>
+ <a href="#" onclick="window.scrollTo(0, 0);">
+  <span style="color: gray; margin-right:10px" class="glyphicon glyphicon-upload" title="Go to top"></span></a>
+ Comments
+</h1>
+<div style="background: white; width: 40%; min-width: 400px;">
+ {% if 'comments' not in report or report.comments|length == 0 %}
+ <h3>No comments</h3>
+ {% endif %}
+ <div id="phl-comment-list">
+ {% for comment in report.comments %}
+  {% include "philadelphia/comment.html" %}
+ {% endfor %}
+ </div>
+ <div class="well">
+  <span style="font-size: 14pt; font-weight: bold;">Add comment</span>
+  <form class="form-horizontal">
+    {% csrf_token %}
+    <fieldset>
+      <div class="control-group">
+        <div class="controls">
+          <textarea class="form-control" name="text" id="phl-comment-text" rows="5"></textarea>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="phl-comment-name">Name</label>
+        <div class="controls">
+          <input type="text" class="form-control" id="phl-comment-name" name="name">
+        </div>
+      </div>
+      <table width="100%" style="margin-top: 15px">
+        <tr>
+          <td width="100%">
+            <span id="phl-comment-error-alert" class="alert alert-danger" style="padding: 5px; display: none">
+             <strong>Error:</strong> Unable to post comment!
+            </span>
+          </td>
+          <td>
+            <input type="submit" value="Submit" id="phl-comment-submit" class="btn btn-primary"/>
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+  </form>
+ </div>
+</div>
+

@@ -1,0 +1,53 @@
+{% autoescape off %}
+\documentclass{article}
+\usepackage[top=0.75in,left=0.75in,bottom=0.75in,right=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{datetime}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{calc}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+\def\scalecheck{\resizebox{\widthof{\checkmark}*\ratio{\widthof{x}}{\widthof{\normalsize x}}}{!}{\checkmark}}
+\lstset{
+  breaklines=true,
+  basicstyle=\small\ttfamily
+}
+\title{Shift Report\\{\Large {{ id }}}}
+\author{ {{ authors }} }
+\date{ {{ date }} }
+\begin{document}
+\maketitle
+{% for block in blocks %}
+\section{ {{ block.value.name }} }
+\begin{description}
+\footnotesize
+\item [Date] {{ block.value.created }}
+\item [ID] {{ block.id }}
+\end{description}
+\begin{description}
+{% for field in block.value.fields %}
+\item [ {{ field.name }} ] {
+{% if field.type == 'checkbox' and field.value == 'true' %}
+\checkmark
+{% elif field.type == 'textarea' %}
+\begin{lstlisting}
+
+{{ field.value }}
+\end{lstlisting}
+{% else %}
+ {{ field.value }}
+{% endif %}
+}
+{% endfor %}
+\end{description}
+
+
+{% endfor %}
+
+\vspace{10 mm}
+\noindent
+Generated \today, \currenttime
+\end{document}
+{% endautoescape %}
+

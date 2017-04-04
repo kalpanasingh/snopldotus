@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}Detector | debugdb | snopl.us{% endblock %}
+{% block content %}
+
+<style>
+.board-name {
+  height: 4em;
+  position: relative;
+  left: -12px;
+  top: -18px;
+}
+
+a {
+ color: #2a6496;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.crate-0  { position: absolute; left: 1160px; top: 250px; }
+.crate-1  { position: absolute; left: 1160px; top: 560px; }
+.crate-2  { position: absolute; left: 872px; top: 200px; }
+.crate-3  { position: absolute; left: 872px; top: 510px; }
+.crate-4  { position: absolute; left: 585px; top: 190px; }
+.crate-5  { position: absolute; left: 298px; top: 200px; }
+.crate-6  { position: absolute; left: 298px; top: 510px; }
+.crate-7  { position: absolute; left: 10px; top: 250px; }
+.crate-8  { position: absolute; left: 10px; top: 560px; }
+.crate-9  { position: absolute; left: 10px; top: 900px; }
+.crate-10 { position: absolute; left: 10px; top: 1210px; }
+.crate-11 { position: absolute; left: 240px; top: 1300px; }
+.crate-12 { position: absolute; left: 470px; top: 1050px; }
+.crate-13 { position: absolute; left: 470px; top: 1360px; }
+.crate-14 { position: absolute; left: 700px; top: 1050px; }
+.crate-15 { position: absolute; left: 700px; top: 1360px; }
+.crate-16 { position: absolute; left: 930px; top: 1300px; }
+.crate-17 { position: absolute; left: 1160px; top: 900px; }
+.crate-18 { position: absolute; left: 1160px; top: 1210px; }
+.timing-rack { position: absolute; left: 585px; top: 700px; }
+</style>
+
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="{% url "debugdb.views.index" %}">debugdb</a></li>
+ <li class="active">Detector</li>
+</ol>
+
+<h1>
+ Detector
+ <div style="float: right; vertical-align: middle;">
+  <button class="btn btn-link grid-toggle bs-tooltip" data-toggle="tooltip" title="Toggle Grid View"><span class="glyphicon glyphicon-th" style="font-size: 18pt; color: gray"></span></a>
+ </div>
+</h1>
+
+<div style="display: inline-block; background: white;" id="timing-rack" class="well well-sm timing-rack">
+ <div style="font-size: 14pt;">
+  <b>Timing Rack</b>
+  <div style="float: right">
+   <img class="bs-tooltip"
+        data-toggle="tooltip"
+        title="I'm watching you."
+        src="{% static "images/pez.gif" %}" height="30" width="30"/>
+  </div>
+ </div>
+
+ <center>
+  <h5>VME</h5>
+  <table style="font-size: 7pt; margin-top: 10px;">
+   <tr>
+    <td class="well well-sm" style="vertical-align: top; background: white;">
+     {% with statuses|get2:timing_rack.mtcd as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     {% if timing_rack.mtcd %}
+     <a {% if statuses|get2:timing_rack.mtcd != "gold" %}class="bold"{% endif %} href="{% url "debugdb.views.board" timing_rack.mtcd %}">{{ timing_rack.mtcd }}</a>
+     {% endif %}
+    </td>
+    <td class="well well-sm" style="vertical-align: top; background: white;">
+     {% with statuses|get2:timing_rack.caen as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     {% if timing_rack.caen %}
+     <a {% if statuses|get2:timing_rack.caen != "gold" %}class="bold"{% endif %} href="{% url "debugdb.views.board" timing_rack.caen %}">{{ timing_rack.caen }}</a>
+     {% endif %}
+    </td>
+   </tr>
+  </table>
+ </center>
+
+ <hr/>
+
+ <center>
+  <h5>MTC/A+</h5>
+  <table style="font-size: 7pt">
+   <tr>
+   {% for mtca in timing_rack.mtca %}
+   <td class="well well-sm" style="vertical-align: top; background: white; padding: 5px; height: 100%;">
+    <div class="rotate90 board-name">
+     {% with statuses|get2:mtca as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     {% if mtca %}
+     <a {% if statuses|get2:mtca != "gold" %}class="bold"{% endif %} href="{% url "debugdb.views.board" mtca %}">{{ mtca }}</a>
+     {% endif %}
+    </div>
+   </td>
+   {% endfor %}
+   </tr>
+  </table>
+ </center>
+</div>
+
+{% for crate in crates %}
+<div style="display: inline-block; background: white;" id="crate-{{ forloop.counter0 }}" class="well well-sm crate-{{ forloop.counter0 }}">
+ <span style="font-size: 14pt;">Crate <b><a href="{% url "debugdb.views.crate" forloop.counter0 %}">{{ forloop.counter0 }}</a></b></span>
+ 
+ <table style="height: 100%; font-size: 7pt">
+  <tr>
+   <td rowspan="2" class="well well-sm" style="vertical-align: top; background: white; padding: 5px; height: 100%;">
+    <div class="rotate90 board-name">
+     {% with statuses|get2:crate.ctc as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     <a href="{% url "debugdb.views.board" crate.ctc %}">{{ crate.ctc }}</a>
+    </div>
+   </td>
+   {% for fec in crate.fecs|slice:"::-1" %}
+   <td class="well well-sm" style="vertical-align: top; padding: 5px; background: white; height: 100%;">
+    <div class="rotate90 board-name">
+     {% with statuses|get2:fec.id as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     {% if fec.id %}
+     <a {% if statuses|get2:fec.id != "gold" %}class="bold"{% endif %} href="{% url "debugdb.views.board" fec.id %}">{{ fec.id }}</a>
+     {% endif %}
+    </div>
+    {% for db in fec.dbs %}
+    <div class="rotate90 board-name">
+     {% with statuses|get2:db as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     {% if db %}
+     <a {% if statuses|get2:db != "gold" %}class="bold"{% endif %} href="{% url "debugdb.views.board" db %}">{{ db }}</a>
+     {% endif %}
+    </div>
+    {% endfor %}
+   </td>
+   {% endfor %}
+   <td rowspan="2" class="well well-sm" style="vertical-align: top; background: white; padding: 5px; height: 100%;">
+    <div class="rotate90 board-name">
+     {% with statuses|get2:crate.xl3 as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     {% if crate.xl3 %}
+     <a {% if statuses|get2:crate.xl3 != "gold" %}class="bold"{% endif %} href="{% url "debugdb.views.board" crate.xl3 %}">{{ crate.xl3 }}</a>
+     {% endif %}
+    </div>
+   </td>
+  </tr>
+  <tr>
+   {% for pmtic in crate.pmtics|slice:"::-1" %}
+   <td class="well well-sm" style="vertical-align: top; background: white; padding: 5px; height: 100%;">
+    <div class="rotate90 board-name">
+     {% with statuses|get2:pmtic as status %}{% include "debugdb/components/board_badge.html" %}{% endwith %}
+     {% if pmtic %}
+     <a {% if statuses|get2:pmtic != "gold" %}class="bold"{% endif %} href="{% url "debugdb.views.board" pmtic %}">{{ pmtic }}</a>
+     {% endif %}
+    </div>
+   </td>
+   {% endfor %}
+  </tr>
+ </table>
+</div>
+{% endfor %}
+
+<script>
+$(function() {
+ $('#timing-rack').width($('#crate-0').width());
+ $('#timing-rack').height($('#crate-0').height());
+ $('.bs-tooltip').tooltip({ html: true }); 
+ $('.grid-toggle').on('click', function(e) {
+  e.preventDefault();
+  for (var i=0; i<19; i++) {
+   var name = 'crate-' + String(i);
+   $('#' + name).toggleClass(name);
+  }
+  $('#timing-rack').toggleClass('timing-rack');
+ });
+});
+</script>
+{% endblock %}
+

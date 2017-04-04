@@ -1,0 +1,23 @@
+{% extends 'debugdb/test.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block results %}
+<h3>Results</h3>
+<table class="table table-striped table-condensed">
+ <tr>
+  <th style="width: 1%; white-space: nowrap"></th>
+  <th>Zero Used</th>
+  <th>Noise Level</th>
+  <th>Difference</th>
+ </tr>
+ {% for channel in channels %}
+ <tr>
+  <th>{{ channel.id }}</th>
+  <td>{{ channel.zero_used }}</td>
+  <td>{{ channel.noiseless }}</td>
+  <td>{{ channel.noiseless|subtract:channel.zero_used }}</td>
+ </tr>
+ {% endfor %}
+</table>
+{% endblock %}
+

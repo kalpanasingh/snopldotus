@@ -1,0 +1,82 @@
+{% load filters %}
+<table width="100%">
+ <tr>
+  <td width="50%" style="vertical-align: top">
+    <div class="well well-sm" style="background: white">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <h3>Surface Control Room</h3>
+            <div class="well well-sm" style="margin-left: 5%; margin-right:10%; background: white">
+              <table class="table">
+                {% with host='monag1.sp.snolab.ca' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='operag1.sp.snolab.ca' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='monag2.sp.snolab.ca' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='fe.sp.snolab.ca' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+  <td colspan="2" width="50%" style="vertical-align: top">
+    <div class="well well-sm" style="background: white">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+            <h3>IT Server Room</h3>
+            <div class="well well-sm" style="margin-left: 5%; margin-right:10%; background: white">
+              <table class="table">
+                {% with host='snag1.sp.snolab.ca' imm='snag1-imm.sp.snolab.ca' height='1em' %}
+                {% with status=nagios_hosts_dict|get2:host imm_status=nagios_hosts_dict|get2:imm %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='nlag.sp.snolab.ca' imm='nlag-imm.sp.snolab.ca' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host imm_status=nagios_hosts_dict|get2:imm %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='dbus.sp.snolab.ca' imm='dbus-imm.sp.snolab.ca' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host imm_status=nagios_hosts_dict|get2:imm %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+
+                {% with host='localhost' height='3em' %}
+                {% with status=nagios_hosts_dict|get2:host %}
+                {% include 'network/rackunit.html' %}
+                {% endwith %}
+                {% endwith %}
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr>
+</table>
+

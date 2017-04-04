@@ -1,0 +1,64 @@
+{% load filters %}
+<div style="font-size: 8pt;border-bottom: solid 1px #ddd; margin-bottom: 5px; white-space: nowrap">
+ {% if ctc %}
+ {% include "debugdb/components/board_badge.html" %}
+ <b><a href="{% url "debugdb.views.board" ctc.id %}">{{ ctc.id }}</a></b>
+ {% else %}
+ <b>None</b>
+ {% endif %}
+ <button class="btn btn-link shuffle" data-crate="{{ crate_id }}" data-type="ctc" data-board="{{ ctc.id }}">
+  <span style="font-size: 6pt; color: #ddd; vertical-align: middle" class="glyphicon glyphicon-random"></span>
+ </button>
+ {% if ctc %}
+ <span>
+  {% with statuses|get2:ctc.id as status %}
+  {% include "debugdb/components/tag_badge.html" %}
+  {% endwith %}
+ </span>
+</div>
+<table style="font-size: 9pt;">
+ <tr>
+  <th style="text-align: center">
+   <span class="label label-{% if ctc.channels.0.ok %}success{% else %}danger{% endif %}">N100</span>
+  </th>
+  <td>{{ ctc.channels.0.offset }}</td>
+ </tr>
+ <tr>
+  <th style="text-align: center">
+   <span class="label label-{% if ctc.channels.1.ok %}success{% else %}danger{% endif %}">N20</span>
+  </th>
+  <td>{{ ctc.channels.1.offset }}</td>
+ </tr>
+ <tr>
+  <th style="text-align: center">
+   <span class="label label-{% if ctc.channels.2.ok %}success{% else %}danger{% endif %}">ESLO</span>
+  </th>
+  <td>{{ ctc.channels.2.offset }}</td>
+ </tr>
+ <tr>
+  <th style="text-align: center">
+   <span class="label label-{% if ctc.channels.3.ok %}success{% else %}danger{% endif %}">ESHI</span>
+  </th>
+  <td>{{ ctc.channels.3.offset }}</td>
+ </tr>
+ <tr>
+  <th style="text-align: center">
+   <span class="label label-{% if ctc.channels.4.ok %}success{% else %}danger{% endif %}">OELO</span>
+  </th>
+  <td>{{ ctc.channels.4.offset }}</td>
+ </tr>
+ <tr>
+  <th style="text-align: center">
+   <span class="label label-{% if ctc.channels.5.ok %}success{% else %}danger{% endif %}">OEHI</span>
+  </th>
+  <td>{{ ctc.channels.5.offset }}</td>
+ </tr>
+ <tr>
+  <th style="text-align: center">
+   <span class="label label-{% if ctc.channels.6.ok %}success{% else %}danger{% endif %}">OWLN</span>
+  </th>
+  <td>{{ ctc.channels.6.offset }}</td>
+ </tr>
+</table>
+{% endif %}
+

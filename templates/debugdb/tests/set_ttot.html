@@ -1,0 +1,52 @@
+{% extends 'debugdb/test.html' %}
+{% load filters %}
+{% block results %}
+<h3>Settings</h3>
+<table class="table">
+ <tr>
+  <th style="width: 1%; white-space: nowrap">Target time</th>
+  <td>{{ targettime }}</td>
+ </tr>
+</table>
+
+<h3>Results</h3>
+<table class="table table-striped table-condensed">
+ <tr>
+  <th style="width: 1%; white-space: nowrap">Chip</th>
+  <th>RMP</th>
+  <th>RMPUP</th>
+  <th>VSI</th>
+  <th>VLI</th>
+  <th>Channel/Errors/Time</th>
+ </tr>
+ {% for chip in chips %}
+ {% with forloop.counter0 as chip_id %}
+ <tr>
+  <th>{{ forloop.counter0 }}</th>
+  <td>{{ chip.rmp }}</td>
+  <td>{{ chip.rmpup }}</td>
+  <td>{{ chip.vsi }}</td>
+  <td>{{ chip.vli }}</td>
+  <td>
+   <table class="table table-striped table-condensed" style="width: 20ex; border: solid 1px #ddd">
+    {% for channel in chip.channels %}
+    <tr>
+     <td style="width: 4ex; white-space: nowrap">{{ chip_id|multiply:4|add:forloop.counter0 }}</td>
+     <td style="width: 4ex; white-space: nowrap">
+      {% if channel.errors %}
+       <span class="label label-danger">{{ channel.errors }}</span>
+      {% else %}
+       <span class="label label-success">ok</span>
+      {% endif %}
+     </td>
+     <td style="width: 10ex; white-space: nowrap">{{ channel.time }}</td>
+    </tr>
+    {% endfor %}
+   </table>
+  </td>
+ </tr>
+ {% endwith %}
+ {% endfor %}
+</table>
+{% endblock %}
+

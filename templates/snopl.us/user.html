@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}{{ display_user.username }} | snopl.us{% endblock %}
+{% block content %}
+<table>
+ <tr>
+   <td>
+     <img src="http://www.gravatar.com/avatar/{{ display_profile.gravatar_hash }}"/>
+   </td>
+   <td>
+     <h1>
+       {{ display_user.first_name }} {{ display_user.last_name }}
+       <h3>(@{{ display_user.username }})</h3>
+     </h1>
+   </td>
+ </tr>
+</table>
+<hr>
+<table>
+  <tr>
+    <th>Institution</th>
+    <td>{{ display_profile.institution.name }}</td>
+  </tr>
+  <tr>
+    <th>Position</th>
+    <td>{{ display_profile.position }}</td>
+  </tr>
+  <tr>
+    <th>Email</th>
+    <td><a href="mailto:{{ display_user.email }}">{{ display_user.email }}</a></td>
+  </tr>
+  {% if display_profile.website %}
+  <tr>
+    <th>Website</th>
+    <td><a href="{{ display_profile.website }}">{{ display_profile.website }}</a></td>
+  </tr>
+  {% endif %}
+
+</table>
+{% endblock %}
+

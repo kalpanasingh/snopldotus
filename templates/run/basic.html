@@ -1,0 +1,27 @@
+{% load filters %}
+<table class="table table-condensed table-striped" style="margin: 10px">
+  <tr>
+    <th>Status</th>
+    <td>{{ orca.run_status }}</td>
+  </tr>
+  <tr>
+    <th>Run type</th>
+    <td>{{ orca.run_type }}</td>
+  </tr>
+  <tr>
+    <th>Start time</th>
+    <td>{{ orca.run_start|date:"Y-m-d H:i:s (T)" }}</td>
+  </tr>
+  <tr>
+    <th>End time</th>
+    <td>{{ orca.run_stop|date:"Y-m-d H:i:s (T)" }}</td>
+  </tr>
+  <tr>
+    <th>Run document</th>
+    <td><a href="http://couch.snopl.us/orca/{{ orca.id }}">{{ orca.id }}</a></td>
+  </tr>
+  <tr>
+    <th>Configuration</th>
+    <td><a href="http://couch.snopl.us/orca/{{ orca.config_id }}">{{ orca.config_id }}</a></td>
+  </tr>
+</table>

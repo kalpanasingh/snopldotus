@@ -1,0 +1,36 @@
+{% extends 'debugdb/test.html' %}
+{% block results %}
+<h3>Results</h3>
+<table class="table">
+ <tr>
+  {% if trig_type == 3 %}
+    <td>{{ "N20 Triggers" }} </td>
+  {% elif trig_type == 0 %}
+    <td>{{ "N100 Triggers" }} </td>
+  {% else %}
+    <td>{{ trig_type }} </td>
+  {% endif %}
+ </tr>
+</table>
+<table class="table table-striped table-condensed">
+ <tr>
+  <th style="width: 1%; white-space: nowrap"></th>
+  <th style="text-align: center">Status</th>
+  <th>Errors</th>
+ </tr>
+ {% for channel in channels %}
+ <tr>
+  <th>{{ channel.id }}</th>
+  <td style="text-align: center">
+   {% if channel.error %}
+   <span class="label label-danger">fail</span>
+   {% else %}
+   <span class="label label-success">pass</span>
+   {% endif %}
+  </td>
+  <td>{{ channel.error }}</td>
+ </tr>
+ {% endfor %}
+</table>
+{% endblock %}
+

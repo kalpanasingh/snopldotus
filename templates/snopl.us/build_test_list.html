@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load filters %}
+{% load staticfiles %}
+{% block title %}{{ type }} Build Tests | snopl.us{% endblock %}
+{% block content %}
+<h1>RAT {{ type }} Build Tests</h1>
+<div class="panel panel-default">
+ <div class="panel-body">
+  <div style="font-size: 12pt; float: left">
+    Showing last <b>~100</b> tests.
+  </div>
+  <div style="float: right; vertical-align: middle;">
+    {% if start != 0 %}
+    <a href="{% url "snopldotus.views.build_tests" %}"><span class="glyphicon glyphicon-home" style="font-size: 18pt; color: gray; padding-right: 40px" title="Home"></span></a>
+    {% endif %}
+    {% if start != 0 %}
+    <a href="{% url "snopldotus.views.build_tests" %}?start={{ start }}"><span class="glyphicon glyphicon-chevron-left" style="font-size: 18pt; color: gray"></span></a>
+    {% endif %}
+    <a href="{% url "snopldotus.views.build_tests" %}?start={{ start }}"><span class="glyphicon glyphicon-chevron-right" style="font-size: 18pt; color: gray"></span></a>
+  </div>
+ </div>
+ <table class="table table-striped table-condensed" width="100%">
+  <tr>
+   <th>ID</th>
+   <th></th>
+   <th>Description</th>
+   <th>Tasks</th>
+   <th width="100%">Status</th>
+  </tr>
+ {% for test in data %}
+  <tr>
+   <td><a href="/code/{{ path }}/record/{{ test.id }}">{{ test.id }}</a></td>
+   <td style="padding-right:20px"><a href="{{ test.changeset_url }}"><img src="{% static 'images/octocat.jpg' %}"></a></td>
+   <td style="white-space:nowrap;">{{ test.description }}</td>
+   <td>{{ test.ntasks }}</td>
+   <td>
+    <div class="progress" style="margin-bottom: 0px">
+     <div class="progress-bar progress-bar-success" style="width: {{ test.pass }}%"></div>
+     <div class="progress-bar progress-bar-danger" style="width: {{ test.fail }}%"></div>
+     <div class="progress-bar progress-bar-primary" style="width: {{ test.inprogress }}%"></div>
+     <div class="progress-bar progress-bar-default" style="background: gray; width: {{ test.waiting }}%"></div>
+    </div>
+   </td>
+  </tr>
+ {% endfor %}
+ </table>
+</div>
+{% endblock %}
+

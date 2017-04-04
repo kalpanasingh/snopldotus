@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% block title %}On Call Experts | snopl.us{% endblock %}
+{% block content %}
+<h1>On Call Expert Contact Information</h1>
+<h4>Author: E. Caden, <a href="mailto:ecaden@snolab.ca">ecaden@snolab.ca</a></h4>
+
+<table class="table table-striped table-condensed" style="width:100%">
+  <tr><td colspan="3" style="background: #eee"><h3>Richie Bonventre</h3></td></tr>
+  <tr>
+    <td>Google Voice</td>
+    <td>+1-818-527-2668</td>
+    <td> </td>
+  </tr>
+  <tr>
+    <td>Mobile Phone</td>
+    <td>+1-518-429-6814</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Office Phone</td>
+    <td>+1-510-486-4038</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Email</td>
+    <td>rbonventre@lbl.gov</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Slack</td>
+    <td>rbonv</td>
+    <td></td>
+  </tr>
+
+   <tr><td colspan="3" style="background: #eee"><h3>Erica Caden</h3></td></tr>
+  <tr>
+    <td>Mobile Phone </td>
+    <td>+1-705-521-3271 </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Office Phone</td>
+    <td> +1-705-692-7000 x2253</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>  Email </td>
+    <td>ecaden@snolab.ca</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Slack </td>
+    <td>erica</td>
+    <td></td>  
+</tr>
+
+  <tr><td colspan="3" style="background: #eee"><h3>Freija Descamps</h3></td></tr>
+  <tr>
+    <td>Mobile Phone </td>
+    <td>+1-510-499-1929 </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Office Phone </td>
+    <td>+1-510-486-4038</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Email </td>
+    <td>fbdescamps@lbl.gov</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Slack </td>
+    <td>freija</td>
+    <td></td>
+  </tr>
+
+      <tr><td colspan="3" style="background: #eee"><h3>Tanner Kaptanoglu</h3></td></tr>
+  <tr>
+    <td>Mobile Phone</td>
+    <td> +1-650-759-6513 </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Penn Apt Phone</td>
+    <td> +1-705-523-8431</td>
+    <td></td>
+  </tr>
+  <tr>
+  <td> Office Phone </td>
+    <td>+1-215-898-1705</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Email </td>
+    <td>tannerk@sas.upenn.edu</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Slack</td>
+    <td> tanner</td>
+    <td></td>
+  </tr>
+  <tr>
+  
+    <tr><td colspan="3" style="background: #eee"><h3>Tony LaTorre</h3></td></tr>
+  <tr>
+    <td>Mobile Phone </td>
+    <td> n/a</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Office Phone </td>
+    <td> +1-773-702-5983</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> CRAG Phone </td>
+    <td> +1-705-692-7000 x2231 </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Email </td>
+    <td> tlatorre@hep.uchicago.edu</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>Slack </td>
+    <td> tlattore</td>
+    <td></td>
+  </tr>
+
+  <tr><td colspan="3" style="background: #eee"><h3>Eric Marzec</h3></td></tr>
+  <tr>
+    <td>Mobile Phone </td>
+    <td> n/a</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Penn Apt Phone </td>
+    <td> +1-705-523-8431</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>  Office </td>
+    <td> +1-215-898-1705</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Email </td>
+    <td> marzece@hep.upenn.edu</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Slack </td>
+    <td> marzece</td>
+    <td></td>
+  </tr>
+  
+    <tr><td colspan="3" style="background: #eee"><h3>Andy Mastbaum</h3></td></tr>
+  <tr>
+    <td> Mobile Phone </td>
+    <td> +1-505-500-4227 </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Office Phone </td>
+    <td>+1-773-702-7481  </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Email </td>
+    <td>mastbaum@uchicago.edu  </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td> Slack </td>
+    <td>mastbaum</td>
+    <td></td>
+  </tr>
+
+<script>
+// http://www.joe-stevens.com/2010/02/18/convert-all-static-text-email-addresses-to-mailto-links-using-jquery/
+$().ready(function() {
+  var regEx = /(\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)/;
+  $("table td").filter(function() {
+    return $(this).html().match(regEx);
+  }).each(function() {
+    $(this).html($(this).html().replace(regEx, "<a href=\"mailto:$1\">$1</a>"));
+  });
+});
+</script>
+{% endblock %}
+

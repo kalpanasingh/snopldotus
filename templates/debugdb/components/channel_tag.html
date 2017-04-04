@@ -1,0 +1,25 @@
+<div style='padding: 10px; background: white;' class='well well-sm'>
+ <table>
+  <tr>
+   <td style='vertical-align: top; width: 1%'>
+    <div class='tag-badge {{ tag.status }}'>
+     <span class='glyphicon glyphicon-tag'></span>
+    </div>
+   </td>
+   <td style='padding-left: 10px; vertical-align: center;'>{{ tag.content }}</td>
+  </tr>
+  <tr>
+   <td colspan='2' style='padding-left: 10px; padding-top: 10px; font-size: 8pt; width: 1%; white-space: nowrap;'>
+   <span style='display: block; white-space: nowrap'>
+    &mdash; {{ tag.author }}
+    {% if tag.created %}
+    ({{ tag.created }})
+    {% elif tag.timestamp %}
+    ({{ tag.timestamp }})
+    {% endif %}
+   </span>
+   </td>
+  </td>
+ </table>
+</div>
+

@@ -1,0 +1,30 @@
+{% load filters %}
+<div style="font-size: 8pt;border-bottom: solid 1px #ddd; margin-bottom: 5px; white-space: nowrap">
+ {% if xl3 %}
+ {% include "debugdb/components/board_badge.html" %}
+ <b style="padding-right: 2ex"><a href="{% url "debugdb.views.board" xl3.id %}">{{ xl3.id }}</a></b>
+ {% else %}
+ <b>None</b>
+ {% endif %}
+ <button class="btn btn-link shuffle" data-crate="{{ crate_id }}" data-type="xl3" data-board="{{ xl3.id }}">
+  <span style="font-size: 6pt; color: #ddd; vertical-align: middle" class="glyphicon glyphicon-random"></span>
+ </button>
+ {% if xl3 %}
+ {% with statuses|get2:xl3.id as status %}
+ {% include "debugdb/components/tag_badge.html" %}
+ {% endwith %}
+</div>
+<table style="font-size: 9pt;">
+ <tr>
+  <td style="text-align: center">
+   <span class="label {% if xl3.ml403_ok %}label-success{% else %}label-danger{% endif %}">ML403</span>
+  </td>
+ </tr>
+ <tr>
+  <td style="text-align: center">
+   <span class="label {% if xl3.sc_reset_ok %}label-success{% else %}label-danger{% endif %}">SC RESET</span>
+  </td>
+ </tr>
+</table>
+{% endif %}
+

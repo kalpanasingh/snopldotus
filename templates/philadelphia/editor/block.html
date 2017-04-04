@@ -1,0 +1,64 @@
+<div class="phl-block" style="background:white; padding:5px" data-name="{{ blk.value.name }}" data-created="{{ blk.value.created }}">
+ <!-- Block header table //-->
+ <table width="100%" style="margin-bottom: 10px;">
+  <tr>
+   <td style="padding-right: 15px; position: relative; top: 10px">
+    <a href="#"
+       style="color: gray; font-size: 20px; margin-right:15px">
+     <span class="phl-block-collapse glyphicon glyphicon-chevron-{% if blk.collapsed %}right{% else %}down{% endif %}"
+           title="Collapse"></span>
+    </a>
+   </td>
+   <td width="100%">
+    <h3 class="phl-block-name" style="margin-bottom:-1px;">{{ blk.value.name }}</h3>
+    <span class="phl-block-created" style="font-size: 8pt">{{ blk.value.created }}</span><br/>
+   </td>
+   <td style="white-space:nowrap; vertical-align: bottom;">
+    <span class="phl-block-id label label-default" style="font-size: 8pt; margin: 10px;">{{ blk.value.id }}</span>
+    <input type="hidden" name="phl-block-id" value="{{ blk.value.id }}"/>
+    <input type="hidden" name="phl-block-editor-id" value="{{ blk.value.editor_id }}"/>
+    <input type="hidden" name="phl-block-rev" value="{{ blk.value.rev }}"/>
+   </td>
+   <td style="vertical-align: bottom">
+    <a href="#" class="phl-block-delete">
+     <span style="color: gray; font-size: 20px;"
+           class="glyphicon glyphicon-remove-circle"
+           title="Delete block"></span>
+    </a>
+   </td>
+  </tr>
+ </table>
+ <!-- End block header table //-->
+ 
+ <!-- Block fields table //-->
+ <table {% if blk.collapsed %}style="display: none;"{% endif %}
+        class="table table-striped table-condensed phl-field-table"
+        width="100%">
+  <tbody class="phl-fields">
+   {% for field in blk.value.fields %}
+    {% include "philadelphia/editor/field.html" %}
+   {% endfor %}
+  </tbody>
+
+  <tbody class="phl-attachments">
+   {% for attachment in blk.value.attachments %}
+    {% include "philadelphia/editor/attachment.html" %}
+   {% endfor %}
+  </tbody>
+
+  <tbody class="phl-add-buttons">
+   <tr>
+    <td><span style="color: gray;" class="glyphicon glyphicon-plus-sign"></span></td>
+    <td style="white-space: nowrap;"><a href="#" class="phl-field-add">Add field</a></td>
+    <td></td>
+   </tr>
+   <tr>
+    <td><span style="color: gray;" class="glyphicon glyphicon-paperclip"></span></td>
+    <td style="white-space: nowrap;"><a href="#" class="phl-attachment-add">Add attachment</a></td>
+    <td></td>
+   </tr>
+  </tbody>
+ </table>
+ <!-- End block fields table //-->
+</div>
+

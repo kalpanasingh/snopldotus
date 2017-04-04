@@ -1,0 +1,11 @@
+<tr class="{% if not status %}default{% elif status.state == 0%}success{% else %}danger{% endif %}" style="margin:5px;">
+ <td colspan="2" style="line-height: {{ height }}; border-bottom: solid 5px white">
+  <span class="glyphicon glyphicon-flash" style="color: {% if status.state == 0 or imm_status.state == 0 %}#468847{% elif tps_power == True %}#468847{% elif tps_power == False%}#b94a48{% else %}#999{% endif %}"></span>
+  <b>{{ host }}</b>
+  <span style="font-size: 9pt; float: right">{{ status.address }}
+  {% if imm %}
+  &nbsp;&nbsp;<span class="label label-{% if imm_status.state == 0%}success{% else %}danger{% endif %}">IMM</span>
+  {% endif %}
+ </span>
+ </td>
+</tr>

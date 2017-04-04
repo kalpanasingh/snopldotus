@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}Crate {{ crate_id }} | debugdb | snopl.us{% endblock %}
+{% block content %}
+
+<style>
+button.shuffle {
+ padding: 0;
+}
+</style>
+
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="{% url "debugdb.views.index" %}">debugdb</a></li>
+ <li><a href="{% url "debugdb.views.detector" %}">Crates</a></li>
+ <li class="active">{{ crate_id }}</li>
+</ol>
+
+<h1>
+ Crate <b>{{ crate_id }}</b>
+ <div style="float: right; vertical-align: middle;">
+  {% if crate_id != 0 %}
+  <a href="{% url "debugdb.views.crate" crate_id|subtract:1 %}"><span class="glyphicon glyphicon-chevron-left" style="font-size: 18pt; color: gray"></span></a>
+  {% endif %}
+  {% if crate_id != 18 %}
+  <a href="{% url "debugdb.views.crate" crate_id|add:1 %}"><span class="glyphicon glyphicon-chevron-right" style="font-size: 18pt; color: gray"></span></a>
+  {% endif %}
+ </div>
+</h1>
+
+<table style="height: 100%">
+ <tr>
+  <td class="well well-sm" style="vertical-align: top; background: white; margin: 6px; height: 100%; min-width:6em">
+   {% include "debugdb/crate/ctc.html" %}
+  </td>
+  {% for slot in slots|slice:"::-1" %}
+  {% with 15|subtract:forloop.counter0 as slot_id %}
+  <td style="padding:1px; margin: 0; vertical-align: top">{% include "debugdb/crate/slot.html" %}</td>
+  {% endwith %}
+  {% endfor %}
+  <td class="well well-sm" style="vertical-align: top; background: white; margin: 6px; height: 100%; min-width:6em; white-space: nowrap">
+   {% include "debugdb/crate/xl3.html" %}
+  </td>
+ </tr>
+</table>
+
+<script>
+$(function() {
+ $('.bs-tooltip').tooltip({ html: true }); 
+ $('button.shuffle').on('click', function(e) {
+  e.preventDefault();
+  var target = $(e.currentTarget);
+  var modal = $('#shuffle-modal');
+  modal.find('.id').html(target.attr('data-board'));
+  modal.find('input[name=crate]').val(target.attr('data-crate'));
+  modal.find('input[name=slot]').val(target.attr('data-slot'));
+  modal.find('input[name=db]').val(target.attr('data-db'));
+  modal.find('input[name=type]').val(target.attr('data-type'));
+  modal.find('input[name=board]').val(target.attr('data-board'));
+  modal.modal('show');
+ });
+});
+</script>
+
+<div class="modal fade" id="shuffle-modal">
+ <div class="modal-dialog">
+  <div class="modal-content">
+   <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="shuffleModal">Swap Board</h4>
+   </div>
+   <div class="modal-body">
+    <form method="POST" action="{% url "debugdb.views.reconfig" %}">
+    {% csrf_token %}
+    <h3>Replace <b class="id"></b></h3>
+    <input type="hidden" name="crate" value=""/>
+    <input type="hidden" name="slot" value=""/>
+    <input type="hidden" name="db" value=""/>
+    <input type="hidden" name="type" value=""/>
+    <input type="hidden" name="board" value=""/>
+    <table class="table">
+     <tr>
+      <th>New Board ID</th>
+      <td><input type="text" class="form-control" name="new-board"/></td>
+     </tr>
+     <tr>
+      <th></th>
+      <td style="text-align: right"><button class="btn btn-default">Apply</button></td>
+     </tr>
+    </table>
+    </form>
+   </div>
+  </div>
+ </div>
+</div>
+{% endblock %}
+

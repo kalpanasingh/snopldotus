@@ -1,0 +1,22 @@
+{% extends 'debugdb/board.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block channels %}
+<br/>
+<h4>Components</h4>
+<table class="table table-striped table-condensed">
+<tr>
+ <th>ML403</th>
+ <td><input type="checkbox" class="form-control" name="ml403_ok" value="{{ ml403_ok }}"/></td>
+</tr>
+<tr>
+ <th>Code Version</th>
+ <td><input type="text" class="form-control" name="retriggers" value="{{ code_version }}"/></td>
+</tr>
+<tr>
+ <th>Slow Controls Resets</th>
+ <td><input type="checkbox" class="form-control" name="sc_reset_ok" value="{{ sc_reset_ok }}"/></td>
+</tr>
+</table>
+{% endblock %}
+

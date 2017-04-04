@@ -1,0 +1,10 @@
+{% extends 'debugdb/test.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block results %}
+<h3>Output</h3>
+<pre>
+{{ printout }}
+</pre>
+{% endblock %}
+

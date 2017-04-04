@@ -1,0 +1,32 @@
+{% extends 'debugdb/test.html' %}
+{% load filters %}
+{% block results %}
+<h3>Results</h3>
+<table class="table table-striped table-condensed">
+ <tr>
+  <th style="width: 1%; white-space: nowrap">Ch</th>
+  <th style="width: 1%; white-space: nowrap">DB Ch</th>
+  <th style="text-align: center">Errors</th>
+  <th>Vbal low</th>
+  <th>Vbal high</th>
+  <th>Error flags</th>
+ </tr>
+ {% for channel in channels %}
+ <tr>
+  <th>{{ channel.id }}</th>
+  <td>{{ channel.id|mod:8 }}</td>
+  <td style="text-align: center">
+   {% if channel.errors %}
+   <span class="label label-danger">fail</span>
+   {% else %}
+   <span class="label label-success">pass</span>
+   {% endif %}
+  </td>
+  <td>{{ channel.vbal_low }}</td>
+  <td>{{ channel.vbal_high }}</td>
+  <td>{{ channel.error_flags }}</td>
+ </tr>
+ {% endfor %}
+</table>
+{% endblock %}
+

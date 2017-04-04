@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Water level | snopl.us{% endblock %}
+{% block content %}
+<h1>Water Level</h1>
+<!-- ><h2><a href="https://www.snolab.ca/snoplus/TWiki/bin/view/Main/WaterFill">Water Fill Schedule</a></h2>
+<h2>Estimated time to water fill completion</h2>
+<div id="fillcounter">{{ estimated_fill_enddate }}</div>
+Predicted end-date assuming filling starts now: {{ estimated_fill_enddate }} -->
+
+<!-- ><h2>Water level plot</h2> -->
+{% if current_level.1 == 'N/A' %}
+        <p>{{ current_level.0 }} UTC: no water-level information is available at this time.</p>
+{% else %}
+        <p>As of {{ current_level.0 }} UTC, the water level in the cavity is {{ current_level.1 }} ft and the water level in the AV is {{ current_level.2 }} ft</p>
+{% endif %}
+
+<!-- ><p>To predict future waterlevels, 7 water-fill shifts per week are assumed with no filling during the weekends. The optimistic (pessimistic) fill-rate is {{ optimistic_fillrate }} ({{ pessimistic_fillrate }}) ft per shift. A total of 14 days of no filling are assumed for the Float-The-Boat at the center of the cavity. This estimate is updated hourly.</p> -->
+<img src="{% static 'images/generated/waterlevel.png' %}" class="img-responsive" alt="Plot of waterdata and predicted end-dates"/>
+
+<h2>Rope tension plot</h2>
+For all Float-The-Boat details and plots, see <a href="https://www.snolab.ca/snoplus/TWiki/bin/view/Main/WaterFill">Float-The-Boat Twiki</a>
+<img src="{% static 'images/generated/tension.png' %}" class="img-responsive" alt="Plot of rope tensions"/>
+
+<script>
+
+$( document ).ready(function() {
+
+  function datetimeToDate(datetime_str, use_utc) {
+    // Return a JS Date object from the given python datetime_str string.
+    // if the optional boolean use_utc argument is given, the datetime_str
+    // will be treated as a UTC datetime_str
+    "use strict";
+    var datetime_parts = datetime_str.split(" ", 2),
+      date_parts = datetime_parts[0].split("-"),
+      time_parts = datetime_parts[1].split(":"),
+      second_parts = time_parts[2].split('.'),
+      mkdate,
+      s2i,
+      smu2ims;
+    use_utc = use_utc === undefined ? false : use_utc;
+
+    // The Date constructors don't work with .apply(), so lambdas
+    if (use_utc) {
+      mkdate = function (y, m, d, hr, min, sec, ms) {
+        return new Date(Date.UTC(y, m, d, hr, min, sec, ms));
+      };
+    } else {
+      mkdate = function (y, m, d, hr, min, sec, ms) {
+        return new Date(y, m, d, hr, min, sec, ms);
+      };
+    }
+
+    // Check for missing milliseconds
+    if (second_parts.length == 1) {
+        second_parts.push("0");
+    }
+
+    // string to int with radix 10
+    s2i = function (i_str) { return parseInt(i_str, 10); };
+
+    // string microsecond (aka mu) to int millisecond (aka ms)
+    smu2ims = function (f_str) {
+        return Math.round(parseFloat(f_str) * 1000);
+    };
+
+    return mkdate(s2i(date_parts[0]), // year
+                  s2i(date_parts[1]) - 1, // month
+                  s2i(date_parts[2]), // day
+                  s2i(time_parts[0]), // hour
+                  s2i(time_parts[1]), // minute
+                  s2i(second_parts[0]), // second
+                  smu2ims("." + second_parts[1])); // millisecond
+  }
+
+  function fmt_duration(seconds, detail) {
+    // Return a string containing the number of years, days, hours, minutes, and
+    // seconds in the given numeric seconds argument. The optional detail
+    // argument can limit the about of detail. Note: 1 year is treated as 365.25
+    // days to approximate "leap years" TAGS: secToYMDHMS, secToDHMS
+    //
+    // Some Examples:
+    //
+    // fmt_duration(35000000)
+    // returns "1 year, 39 days, 20 hours, 13 minutes, 20 seconds"
+    //
+    // fmt_duration(24825601)
+    // returns "287 days, 8 hours, 1 second"
+    //
+    // fmt_duration(24825601, 3)
+    // returns "287 days, 8 hours"
+    //
+    // fmt_duration(24825601, 1)
+    // returns "less than one year"
+    //
+    "use strict";
+    var labels = ['years', 'days', 'hours', 'minutes', 'seconds'],
+      increments = [31557600, 86400, 3600, 60, 1],
+      result = "",
+      i,
+      increment,
+      label,
+      quantity;
+    detail = detail === undefined ? increments.length : detail;
+    detail = Math.min(detail, increments.length);
+
+    for (i = 0; i < detail; i += 1) {
+      increment = increments[i];
+      label = labels[i];
+
+      if (seconds >= increment) {
+        quantity = Math.floor(seconds / increment);
+        if (quantity === 1) {
+          // if singular, strip the 's' off the end of the label
+          label = label.slice(0, -1);
+        }
+        seconds -= quantity * increment;
+        result = result + " " + quantity + " " + label + ",";
+      }
+    }
+
+    result = result.slice(1, -1);
+    if (result === "") {
+      result = "less than one " + labels[detail - 1].slice(0, -1);
+    }
+
+    return result;
+  }
+
+
+  function updateTimers() {
+    var now = new Date().getTime();
+
+    $( "div#fillcounter" ).each(function() {
+      $(this).text(
+        fmt_duration(($(this).data('timestamp') - now ) / 1000, 6)
+      );
+    });
+  }
+
+  // init the timery things
+  $( "div#fillcounter" ).each(function() {
+    $(this).data('timestamp', datetimeToDate($(this).text(), true).getTime());
+  });
+  updateTimers();
+
+  // update 'em every second
+  setInterval(updateTimers, 1000);
+});
+
+
+</script>
+{% endblock %}

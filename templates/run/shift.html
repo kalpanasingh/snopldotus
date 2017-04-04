@@ -1,0 +1,58 @@
+{% load filters %}
+{% if shift %}
+<h2>Basic Information</h2>
+<table class="table table-condensed table-striped" style="margin: 10px">
+  <tr>
+    <th>ID</th>
+    <td><a href="/shift/view/{{ shift.report_id }}" target="_blank">{{ shift.report_id }}</a></td>
+  </tr>
+  <tr>
+    <th>Time</th>
+    <td>{{ shift.field_dict|get:"Shift start time" }}</td>
+  </tr>
+  <tr>
+    <th>Underground</th>
+    <td>{{ shift.field_dict|get:"Underground?" }}</td>
+  </tr>
+  <tr>
+    <th>Run numbers</th>
+    <td>{{ shift.field_dict|get:"Starting run number" }} - {{ shift.field_dict|get:"Ending run number" }}</td>
+  </tr>
+  <tr>
+    <th>Run type</th>
+    <td>{{ shift.field_dict|get:"Run type" }}</td>
+  </tr>
+  <tr>
+    <th>Summary</th>
+    <td>{{ shift.field_dict|get:"Summary" }}</td>
+  </tr>
+  <tr>
+    <th>Crew</th>
+    <td>{{ shift.field_dict|get:"Crew" }}</td>
+  </tr>
+  <tr>
+    <th>Detector leadhand</th>
+    <td>{{ shift.field_dict|get:"Name of detector leadhand" }}</td>
+  </tr>
+  <tr>
+    <th>Lab coordinator</th>
+    <td>{{ shift.field_dict|get:"Name of lab coordinator" }}</td>
+  </tr>
+  <tr>
+    <th>Synopsis</th>
+    <td>{{ shift.field_dict|get:"Synopsis"|safe }}</td>
+  </tr>
+  <tr>
+    <th>Opinions</th>
+    <td>{{ shift.field_dict|get:"Opinions"|safe }}</td>
+  </tr>
+</table>
+{% if shift.comments %}
+  <h2>Comments</h2>
+  <div style="width: 40%; min-width: 400px">
+    {% for comment in shift.comments %}
+    {% include "philadelphia/comment.html" %}
+    {% endfor %}
+  </div>
+{% endif %}
+{% endif %}

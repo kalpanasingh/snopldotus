@@ -1,0 +1,15 @@
+{
+   "_id": "_design/penn_daq_views",
+   "language": "javascript",
+   "views": {
+       "get_fec": {
+           "map": "function(doc) {\n if (doc.name == \"FEC\") {emit([doc.crate, doc.card, doc.time_stamp], doc); }}"
+       },
+       "get_fec_by_generated": {
+           "map": "function(doc) {\n if (doc.name == \"FEC\" && doc.timestamp_generated) {emit([doc.crate, doc.card, doc.timestamp_generated], doc); }}"
+       },
+       "get_test_by_cc": {
+           "map": "function(doc) {\n if (doc.config && doc.type){ if (doc.config.loc == \"underground\"){ emit([doc.config.crate_id,doc.config.slot,doc.type,-1*doc.timestamp],doc);}}}"
+       }
+   }
+}

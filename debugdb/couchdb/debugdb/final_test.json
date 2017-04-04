@@ -1,0 +1,18 @@
+{
+    "map": "function (doc) {
+        if (doc.config && doc.type != 'board') {
+            if (doc.type == 'final_test') {
+                emit([doc._id, 0], doc);
+            }
+            else if (doc.final_test_id) {
+                var d = {
+                    _id: doc._id,
+                    type: doc.type,
+                    pass: doc.pass,
+                    created: doc.created
+                };
+                emit([doc.final_test_id, 1], d);
+            }
+        }
+    }"
+}

@@ -1,0 +1,12 @@
+{
+    "map": "function(doc) {
+  if (doc.name == \"FEC\" && doc.timestamp_generated) {
+    emit([doc.board_id, doc.timestamp_generated], doc.ecal_id);
+    emit([doc.id.db0, doc.timestamp_generated], doc.ecal_id);
+    emit([doc.id.db1, doc.timestamp_generated], doc.ecal_id);
+    emit([doc.id.db2, doc.timestamp_generated], doc.ecal_id);
+    emit([doc.id.db3, doc.timestamp_generated], doc.ecal_id);
+    emit([doc.id.hv, doc.timestamp_generated], doc.ecal_id);
+  }
+}"
+}

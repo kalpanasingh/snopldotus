@@ -1,0 +1,48 @@
+<tr>
+ <td>
+  {% if not field.required %}
+  <a href="#" class="phl-field-delete">
+   <span style="color: gray;"
+         class="glyphicon glyphicon-remove-circle"></span>
+  </a>
+  {% endif %}
+ </td>
+ <th style="white-space: nowrap; vertical-align: top;">
+  {{ field.name }}
+  {% if field.help %}
+  <button type="button" data-container="body" class="btn btn-link" style="padding:0px;margin:0px" data-toggle="tooltip" data-placement="top" title="{{ field.help }}"><span class="glyphicon glyphicon-question-sign" style="color: gray"></span></button>
+  {% endif %}
+ </th>
+ <td style="width: 100%;">
+  <form class="phl-field-form">
+  <input type="hidden" name="name" value="{{ field.name }}"/>
+  <input type="hidden" name="type" value="{{ field.type }}"/>
+  <input type="hidden" name="required" value="{{ field.required }}"/>
+  <input type="hidden" name="help" value="{{ field.help }}"/>
+  <input type="hidden" name="attrib" value="{{ field.attrib }}"/>
+  {% if field.type == 'text' %}
+  <input type="text"
+         name="value"
+         value="{{ field.value }}"
+         class="form-control"
+         style="border-top: none; border-bottom: none; height: 3ex; width: 95%"
+         {{ field.attrib }}
+         {% if field.required %}required="required"{% endif %}/>
+  {% endif %}
+  {% if field.type == 'checkbox' %}
+  <input type="checkbox"
+         name="value"
+         value="true"
+         {% if field.value == "true" %}checked{% endif %}
+         {{ field.attrib }}/>
+  {% endif %}
+  {% if field.type == 'textarea' %}
+  <textarea name="value"
+            class="form-control"
+            style="border-top:none; border-bottom: none; font-family: monospace;"
+            {{ field.attrib }}>{{ field.value }}</textarea>
+  {% endif %}
+  </form>
+ </td>
+</tr>
+

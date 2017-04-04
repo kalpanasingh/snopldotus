@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}{{ type }} {{ id|slice:"-10:" }} | debugdb | snopl.us{% endblock %}
+{% block content %}
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="{% url "debugdb.views.index" %}">debugdb</a></li>
+ <li><a href="{% url "debugdb.views.ecals" %}">ECALs</a></li>
+ <li class="active">{{ id|slice:"-10:" }}</li>
+</ol>
+
+<table>
+ <tr>
+  <td rowspan="2" style="font-size: 28pt; padding-right: 15px;">
+   <span class="glyphicon glyphicon-list-alt" style="color: #aaa;"></span>
+  </td>
+  <td style="font-size: 28pt">{{ type }} <b>{{ id|slice:"-10:" }}</b></td>
+ </tr>
+ <tr>
+  <td style="font-size: 14pt">{{ created }}</td>
+ </tr>
+</table>
+
+<div class="container-fluid">
+ <div class="row">
+  <div class="col-md-2">
+   <h3>Settings</h3>
+   <table class="table table-condensed">
+    <tr>
+     <th>Vint</th>
+     <td>{{ settings.vint }}</td>
+    </tr>
+    <tr>
+     <th>HVref</th>
+     <td>{{ settings.hvref }}</td>
+    </tr>
+   </table>
+   <table class="table table-condensed">
+    <tr>
+     <th style="text-align: center"></th>
+     <th style="text-align: center">SCMOS</th>
+     <th style="text-align: center">N100</th>
+     <th style="text-align: center">N20</th>
+     <th style="text-align: center">N20 width</th>
+    </tr>
+    {% for index in 32|get_range %}
+    <tr>
+     <th style="text-align: center">{{ index }}</th>
+     <td style="text-align: center">{{ settings.scmos|get2:index }}</td>
+     <td style="text-align: center">
+      {% if settings.tr100.mask|get2:index %}
+      <span style="font-size: 6pt" class="label label-success"><span class="glyphicon glyphicon-ok"></span></span>
+      {% else %}
+      <span style="font-size: 6pt" class="label label-danger"><span class="glyphicon glyphicon-remove"></span></span>
+      {% endif %}
+     </td>
+     <td style="text-align: center">
+      {% if settings.tr20.mask|get2:index %}
+      <span style="font-size: 6pt" class="label label-success"><span class="glyphicon glyphicon-ok"></span></span>
+      {% else %}
+      <span style="font-size: 6pt" class="label label-danger"><span class="glyphicon glyphicon-remove"></span></span>
+      {% endif %}
+     </td>
+     <td style="text-align: center">{{ settings.tr20.width|get2:index }}</td>
+    </tr>
+    {% endfor %}
+   </table>
+  </div>
+  <div class="col-md-10">
+   <h3>Results</h3>
+   <table class="table">
+    {% for crate in crates %}
+    <tr>
+     <td colspan="16">
+      <h4>Crate {{ crate.crate_id }} (0x{{ crate.slot_mask }})</h4>
+     </td>
+    </tr>
+    <tr>
+     {% for i in 16|get_range|slice:"::-1" %}
+     <td class="well well-sm" style="background: white; text-align: center; font-size: 9pt">
+      <h4>{{ i }}</h4>
+      {% with crate.slots|get2:i as config %}
+      {% with configuration.crates|get2:crate.crate_id|get2:"fecs"|get2:i|get2:"id" as currentfec %}
+      {% with configuration.crates|get2:crate.crate_id|get2:"fecs"|get2:i|get2:"dbs" as currentdbs %}
+      {% if config %}
+      <a href="{% url "debugdb.views.board" config.mb_id %}">{{ config.mb_id }}</a>
+      {% if currentfec and config.mb_id != currentfec %}
+      &nbsp;
+      <span style="color:#d9534f"
+            data-toggle="tooltip"
+            data-placement="bottom"
+            title="{{ crate.crate_id }}/{{ i }} is now {{ currentfec }}"
+            class="bs-tooltip glyphicon glyphicon-warning-sign"></span>
+      {% endif %}
+      <table class="table">
+       <tr>
+        <td style="padding: 0; padding-top: 5px">
+          <span style="color:#d9534f"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="{{ crate.crate_id }}/{{ i }}/0 is now {{ currentdbs.0 }}"
+                class="bs-tooltip glyphicon{% if currentdbs and config.db0_id != currentdbs.0 %} glyphicon-warning-sign{% endif %}"></span>
+        </td>
+        <td style="padding: 0; padding-top: 5px">
+          <span style="color:#d9534f"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="{{ crate.crate_id }}/{{ i }}/1 is now {{ currentdbs.1 }}"
+                class="bs-tooltip glyphicon{% if currentdbs and config.db1_id != currentdbs.1 %} glyphicon-warning-sign{% endif %}"></span>
+        </td>
+        <td style="padding: 0; padding-top: 5px">
+          <span style="color:#d9534f"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="{{ crate.crate_id }}/{{ i }}/2 is now {{ currentdbs.2 }}"
+                class="bs-tooltip glyphicon{% if currentdbs and config.db2_id != currentdbs.2 %} glyphicon-warning-sign{% endif %}"></span>
+        </td>
+        <td style="padding: 0; padding-top: 5px">
+          <span style="color:#d9534f"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="{{ crate.crate_id }}/{{ i }}/3 is now {{ currentdbs.3 }}"
+                class="bs-tooltip glyphicon{% if currentdbs and config.db3_id != currentdbs.3 %} glyphicon-warning-sign{% endif %}"></span>
+        </td>
+       </tr>
+       <tr>
+        <td style="border: none">
+         <div class="rotate90" style="white-space: nowrap; position: relative; top: -10px; left: 10px; width: 0">
+          <a href="{% url "debugdb.views.board" config.db0_id %}">{{ config.db0_id }}</a>
+         </div>
+        </td>
+        <td style="border: none">
+         <div class="rotate90" style="white-space: nowrap; position: relative; top: -10px; left: 10px; width: 0">
+          <a href="{% url "debugdb.views.board" config.db1_id %}">{{ config.db1_id }}</a>
+         </div>
+        </td>
+        <td style="border: none">
+         <div class="rotate90" style="white-space: nowrap; position: relative; top: -10px; left: 10px; width: 0">
+          <a href="{% url "debugdb.views.board" config.db2_id %}">{{ config.db2_id }}</a>
+         </div>
+        </td>
+        <td style="border: none">
+         <div class="rotate90" style="white-space: nowrap; position: relative; top: -10px; left: 10px; width: 0">
+          <a href="{% url "debugdb.views.board" config.db3_id %}">{{ config.db3_id }}</a>
+         </div>
+        </td>
+       </tr>
+      </table>
+      <table class="table table-condensed">
+       {% for test in tests|get2:crate.crate_id|get2:i %}
+       <tr>
+        <td>
+         {% if test.pass %}
+         <span class="label label-success">pass</span>
+         {% else %}
+         <span class="label label-danger">fail</span>
+         {% endif %}
+        </td>
+        <td style="text-align: left">
+         <a href="{% url "debugdb.views.test" test.id %}">{{ test.type }}</a>
+        </td>
+        </tr>
+        {% endfor %}
+       </table>
+       {% endif %}
+       {% endwith %}
+       {% endwith %}
+       {% endwith %}
+      </td>
+      {% endfor %}
+    </tr> 
+   {% endfor %}
+   </table>
+   <h3>Log File</h3>
+   {{ logfile_name }}
+  </div>
+ </div>
+</div>
+<script>
+$('.bs-tooltip').tooltip();
+</script>
+{% endblock %}
+

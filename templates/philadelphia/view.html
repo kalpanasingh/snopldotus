@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}Shift Report {{ id }} | snopl.us{% endblock %}
+{% block content %}
+<style>
+.hover-red:hover { color: red; }
+.hover-orange:hover { color: orange; }
+</style>
+<a id="top"></a>
+<table width="100%" style="margin-bottom:5px;">
+ <tr>
+  <td width="100%">
+   <h1>
+    <a href="/shift{% if index_start != 0 %}?start={{ index_start }}{% endif %}"><span style="color: gray" class="glyphicon glyphicon-chevron-left"></span></a>
+    {% if report.submitted %}
+      <span style="color: green" class="glyphicon glyphicon-ok-circle" title="Submitted"></span>
+    {% else %}
+      <span style="color: gray" class="glyphicon glyphicon-pencil" title="In Progress"></span>
+    {% endif %}
+    Shift Report
+    {% if report.comments %}
+     <a href="#comments"><span style="color: gray; font-size: 20px; margin-right:10px" class="glyphicon glyphicon-comment" title="Go to comments"></span></a>
+    {% endif %}
+   </h1>
+   <span class="label label-default">DOCUMENT ID: <span id="phl-report-id">{{ id }}</span></span>
+  </td>
+  <td style="text-align: center">
+   <a href="#"
+      id="phl-help"
+      data-toggle="modal"
+      data-target="#phl-help-modal" style="text-decoration: none;">
+    <div class="well well-sm">
+     <span style="color: gray; font-size: 20px;"
+          class="glyphicon glyphicon-question-sign"
+          title="Help"></span>
+     <br/>
+     <label class="label label-default" style="background: gray">HELP</label>
+    </div>
+   </a>
+  </td>
+  <td style="text-align: center">
+   <a href="/shift/pdf/{{ id }}" style="text-decoration: none;">
+    <div class="well well-sm">
+    <span style="color: gray; font-size: 20px;"
+          class="glyphicon glyphicon-floppy-save"
+          title="Save"></span>
+     <br/>
+     <label class="label label-default" style="background: gray">PDF</label>
+    </div>
+   </a>
+  </td>
+  <td style="text-align: center">
+   {% if not report.submitted %}
+   <a href="/shift/edit/{{ id }}" style="text-decoration: none;">
+    <div class="well well-sm">
+     <span class="glyphicon glyphicon-pencil hover-orange"
+           style="color: gray; font-size: 20px;"
+           title="Edit"></span>
+     <br/>
+     <label class="label label-default" style="background: gray">EDIT</label>
+    </div>
+   </a>
+   {% endif %}
+  </td>
+  <td style="text-align: center">
+   {% if not report.submitted and user.is_superuser %}
+   <a href="#" id="phl-report-delete" style="text-decoration: none;">
+    <div class="well well-sm">
+     <span class="glyphicon glyphicon-trash hover-red"
+           style="color: gray; font-size: 20px;"
+           title="Delete"></span>
+     <br/>
+     <label class="label label-default" style="background: gray">DELETE</label>
+    </div>
+   </a>
+   {% endif %}
+  </td>
+ </tr>
+</table>
+
+{% for blk in blocks %}
+<div class="phl-block" style="background:white; padding:5px">
+<table width="100%" style="margin-bottom: 10px;">
+ <tr>
+  <td style="padding-right: 15px; position: relative; top: 10px">
+    <a href="#" style="color: gray; font-size: 20px; margin-right:15px"><span class="phl-block-collapse glyphicon glyphicon-chevron-{% if blk.collapsed %}right{% else %}down{% endif %}" title="Collapse"></span></a>
+   </td>
+  <td width="100%">
+   <h3 style="margin-bottom:-1px;">{{ blk.value.name }}</h3>
+   <span style="font-size: 8pt">{{ blk.value.created }}</span><br/>
+  </td>
+  <td style="white-space:nowrap; vertical-align: bottom">
+   <span class="label label-default" style="font-size: 8pt">{{ blk.id }}</span>
+  </td>
+ </tr>
+</table>
+
+<table {% if blk.collapsed %}style="display: none;"{% endif %} class="table table-striped table-condensed phl-field-table" width="100%">
+{% for field in blk.value.fields %}
+ <tr>
+  <th style="white-space: nowrap; vertical-align: top;">{{ field.name }}</th>
+  <td style="width: 100%;">
+  {% if field.type == 'text' %}
+   {{ field.value|keywords|safe }}
+  {% endif %}
+  {% if field.type == 'checkbox' %}
+   <input type="checkbox" disabled {% if field.value == 'true' %}checked{% endif %}/>
+  {% endif %}
+  {% if field.type == 'textarea' %}
+   <pre style="word-break: normal;">{{ field.value|keywords|safe }}</pre>
+  {% endif %}
+  </td>
+ </tr>
+{% endfor %}
+{% for attachment in blk.value.attachments %}
+ <tr>
+  <th>Attachment</th>
+  <td>
+   <a href="/shift/attachment/{{ blk.id }}/{{ attachment }}">{{ attachment }}</a>
+  </td>
+ </tr>
+{% endfor %}
+</table>
+</div>
+{% endfor %}
+
+{% include 'philadelphia/comments.html' %}
+{% include 'philadelphia/help.html' %}
+
+<script language="javascript" src="{% static 'js/philadelphia.js' %}"></script>
+<script language="javascript" src="{% static 'js/philadelphia.view.js' %}"></script>
+{% endblock %}
+

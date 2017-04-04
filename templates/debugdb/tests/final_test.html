@@ -1,0 +1,25 @@
+{% extends 'debugdb/test.html' %}
+{% load filters %}
+{% block results %}
+<h3>Tests</h3>
+<table class="table">
+ {% for testrow in tests %}
+ {% with testrow.value as test %}
+ <tr>
+  <td style="width: 1%; white-space: nowrap">
+   <a href="{% url "debugdb.views.test" testrow.id %}">{{ test.type }}</a>
+  </td>
+  <td style="white-space: nowrap; text-align: center">
+   {% if test.pass %}
+    <span class="label label-success">pass</span>
+   {% else %}
+    <span class="label label-danger">fail</span>
+   {% endif %}
+  </td>
+  <td>{{ test.created }}</td>
+ </tr>
+ {% endwith %}
+ {% endfor %}
+</table>
+{% endblock %}
+

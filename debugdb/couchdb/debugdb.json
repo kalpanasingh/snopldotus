@@ -1,0 +1,104 @@
+{
+  "_id": "_design/debugdb",
+  "language": "javascript",
+   "views": {
+       "tests_by_fec": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            var created = -(new Date(doc.created)).getTime();\n            var d = {\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created,\n                config: doc.config,\n                archived: doc.archived\n            };\n            emit([doc.config.fec_id, created], d);\n        }\n    }"
+       },
+       "tests_by_crate": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            var created = -(new Date(doc.created)).getTime();\n            var d = {\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created,\n                config: doc.config,\n                archived: doc.archived\n            };\n            emit([doc.config.crate_id, created], d);\n        }\n    }"
+       },
+       "tests_by_slot": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            var created = -(new Date(doc.created)).getTime();\n            var d = {\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created,\n                config: doc.config,\n                archived: doc.archived\n            };\n            emit([{\"crate\": doc.config.crate_id, \"slot\": doc.config.slot}, created], d);\n        }\n    }"
+       },
+       "tests_by_db": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            doc.config.db.forEach(\n                function(db) {\n                    var created = -(new Date(doc.created)).getTime();\n                    var d = {\n                        type: doc.type,\n                        pass: doc.pass,\n                        created: doc.created,\n                        config: doc.config,\n                        archived: doc.archived\n                     };\n                    emit([db.db_id, created], d);\n                }\n            );\n        }\n    }"
+       },
+       "tests_by_name": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            var created = -(new Date(doc.created)).getTime();\n            var d = {\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created,\n                config: doc.config,\n                archived: doc.archived\n            };\n            emit([doc.type, created], d);\n        }\n    }"
+       },
+       "tests_by_created": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            var c = new Date(doc.created);\n            var created = c.getTime();\n            var short_created = c.toLocaleString();\n            var d = {\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created,\n                short_created: short_created,\n                config: doc.config,\n                archived: doc.archived\n            };\n            emit(-created, d);\n        }\n    }"
+       },
+       "ecals_by_created": {
+           "map": "function (doc) {\n        if (doc.type == \"ecal\") {\n            var c = new Date(doc.created);\n            var created = c.getTime();\n            var short_created = c.toLocaleString();\n            var d = {\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created,\n                short_created: short_created,\n                archived: doc.archived,\n                crates: doc.crates\n            };\n            emit(-created, d);\n        }\n    }"
+       },
+       "fecs": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            emit(doc.config.fec_id, 1);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "crates": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board')\n            emit(doc.config.crate_id, 1);\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "dbs": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            doc.config.db.forEach(\n                function(db) {\n                    emit(db.db_id, 1);\n                }\n            );\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "tests": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            emit(doc.type, 1);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "final_test": {
+           "map": "function (doc) {\n        if (doc.config && doc.type != 'board') {\n            if (doc.type == 'final_test') {\n                emit([doc._id, 0], doc);\n            }\n            else if (doc.final_test_id) {\n                var d = {\n                    _id: doc._id,\n                    type: doc.type,\n                    pass: doc.pass,\n                    created: doc.created\n                };\n                emit([doc.final_test_id, 1], d);\n            }\n        }\n    }"
+       },
+       "ecal": {
+           "map": "function (doc) {\n        if (doc.type == 'ecal') {\n            emit([doc._id, 0], doc);\n        }\n        else if (doc.ecal_id) {\n            var d = {\n                _id: doc._id,\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created,\n                config: doc.config\n            };\n            emit([doc.ecal_id, 1], d);\n        }\n    }"
+       },
+       "logs_by_created": {
+           "map": "function (doc) {\n        if (doc.type == 'log') {\n          var t = new Date(doc.created);\n          var clip = (doc.text.length < 50 ? doc.text : doc.text.substring(0,47) + '...');\n          var d = {\n              _id: doc._id,\n              created: doc.created,\n              title: doc.title,\n              clip: clip\n          };\n          emit(-t, d);\n        }\n    }"
+       },
+       "logbook_search_keys": {
+           "map": "function (doc) {\n    if (doc.type == 'log') {\n      words = doc.title.split(' ');\n      for (word in words) {\n        emit([words[word]], {\n            id: doc._id,\n            title: doc.title\n        });\n      }\n    }\n  }"
+       },
+       "tags": {
+           "map": "function (doc) {\n        if (doc.type == 'tag') {\n            emit(doc.board, 1);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "tags_with_status": {
+           "map": "function (doc) {\n        if (doc.type == 'tag') {\n            emit(doc.board, [doc.created, doc.status, 1]);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        var maxdate = (new Date('12/31/1769')).getTime();\n        var status = \"none\";\n        var summed = 0;\n        for (var i=0; i<values.length; i++) {\n            summed += values[i][2];\n            var d = new Date(values[i][0]);\n            var thisdate = d.getTime();\n            if (thisdate > maxdate && values[i][1] != \"none\") {\n                maxdate = thisdate;\n                status = values[i][1];\n            }\n        }\n        return [maxdate, status, summed];\n    }"
+       },
+       "tags_by_board": {
+           "map": "function (doc) {\n       if (doc.type == 'tag') {\n         var created = -(new Date(doc.created)).getTime();\n         var d = {\n             id: doc._id,\n             status: doc.status,\n             setup: doc.setup,\n             author: doc.author,\n             content: doc.content,\n             created: doc.created,\n         };\n         emit([doc.board, created], d);\n       }\n     }"
+       },
+       "boards": {
+           "map": "function (doc) {\n        if (doc.type == 'board') {\n          emit(doc._id, [doc.status, doc.location, doc.channels]);\n        }\n    }"
+       },
+       "board": {
+           "map": "function (doc) {\n        if (doc.type == 'board') {\n            emit([doc._id, 0], doc);\n        }\n        else if (doc.type == 'final_test') {\n            var d = {\n                _id: doc._id,\n                type: doc.type,\n                pass: doc.pass,\n                created: doc.created\n            };\n            emit([doc.config.fec_id, 1], d);\n            emit([doc.config.db[0].db_id, 1], d);\n            emit([doc.config.db[1].db_id, 1], d);\n            emit([doc.config.db[2].db_id, 1], d);\n            emit([doc.config.db[3].db_id, 1], d);\n        }\n        else if (doc.type == 'ecal') {\n            for (crate in doc.crates) {\n                for (slot in doc.crates[crate].slots) {\n                    var s = doc.crates[crate].slots[slot];\n                    var d = {\n                        _id: doc._id,\n                        type: doc.type,\n                        archived: doc.archived,\n                        created: doc.created,\n                        crates: doc.crates,\n                        config: doc.config\n                    };\n                    emit([s.mb_id, 2], d);\n                    emit([s.db0_id, 2], d);\n                    emit([s.db1_id, 2], d);\n                    emit([s.db2_id, 2], d);\n                    emit([s.db3_id, 2], d);\n                }\n            }\n        }\n        else if (doc.name == 'FEC') {\n            var d = {\n                _id: doc._id,\n                type: doc.type,\n                created: doc.timestamp_generated\n            };\n            emit([doc.board_id, 3], d);\n            emit([doc.id.hv, 3], d);\n            emit([doc.id.db0, 3], d);\n            emit([doc.id.db1, 3], d);\n            emit([doc.id.db2, 3], d);\n            emit([doc.id.db3, 3], d);\n        }\n        else if (doc.type == 'tag') {\n            var board = doc.board.toLowerCase();\n            if (board.substring(0,1) == 'm') {\n                board = 'f' + board.substring(1, board.length);\n            }\n            emit([board, 4], doc);\n        }\n    }"
+       },
+       "crater": {
+           "map": "function (doc) {\n        if (doc.type == 'detector_config') {\n            for (var idx in doc.crates) {\n                emit([doc.experiment, idx], doc.crates[idx]);\n            }\n        }\n    }"
+       },
+       "board_stats": {
+           "map": "function (doc) {\n        if (doc.type == \"board\") {\n            emit(doc.status, 1);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "fec_stats": {
+           "map": "function (doc) {\n        if (doc.type == \"board\" && doc.board_type == \"Front-End Card\") {\n            emit(doc.status, 1);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "db_stats": {
+           "map": "function (doc) {\n        if (doc.type == \"board\" && doc.board_type == \"Daughterboard\") {\n            emit(doc.status, 1);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "location_stats": {
+           "map": "function (doc) {\n        if (doc.type == \"board\") {\n            emit(doc.location, 1);\n        }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "parts": {
+           "map": "function (doc) {\n        if (doc.type == \"part\") {\n            emit(doc.name, doc);\n        }\n    }"
+       },
+       "location_and_status": {
+           "map": "function (doc) {\n      if (doc.type == \"board\"){\n        emit([doc.board_type,doc.location,doc.status],1);\n      }\n    }",
+           "reduce": "function (keys, values) {\n        return sum(values);\n    }"
+       },
+       "tests_by_id": {
+           "map": "function (doc) {\n  if (doc.config && doc.type != 'board' && doc.type != 'ecal') {\n    var created = -(new Date(doc.created)).getTime();\n    var d = {\n      type: doc.type,\n      pass: doc.pass,\n      created: doc.created,\n      config: doc.config,\n      archived: doc.archived\n    };\n    emit([doc.config.fec_id, created], d);\n    doc.config.db.forEach(function(db) {\n      emit([db.db_id, created], d);\n    });\n  }\n}"
+       },
+       "get_fec_by_board_id": {
+           "map": "function(doc) {\n  if (doc.name == \"FEC\" && doc.timestamp_generated) {\n    emit([doc.board_id, doc.timestamp_generated], doc.ecal_id);\n    emit([doc.id.db0, doc.timestamp_generated], doc.ecal_id);\n    emit([doc.id.db1, doc.timestamp_generated], doc.ecal_id);\n    emit([doc.id.db2, doc.timestamp_generated], doc.ecal_id);\n    emit([doc.id.db3, doc.timestamp_generated], doc.ecal_id);\n    emit([doc.id.hv, doc.timestamp_generated], doc.ecal_id);\n  }\n}"
+       }
+   }
+}

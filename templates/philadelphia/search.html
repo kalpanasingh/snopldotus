@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}Shift Report Search | snopl.us{% endblock %}
+{% block content %}
+<style>
+pre b { color: #aa0000; font-weight: bold; }
+</style>
+<table width="100%" style="margin-top: 10px;">
+ <tr>
+  <td width="100%">
+   <h1>
+    <a href="{% url 'philadelphia.views.index' %}"><span style="color: gray" class="glyphicon glyphicon-chevron-left"></span></a>
+    Search Results
+   </h1>
+   <h2>{{ results.total_rows }} results for <b>{{ term }}</b>{% if field %} in blocks with <b>{{ field }}</b>{% endif %}</h2>
+  </td>
+  <td style="white-space: nowrap; text-align: center">
+   <a href="#"
+      id="phl-help"
+      style="text-decoration: none"
+      data-toggle="modal"
+      data-target="#phl-help-modal">
+    <div class="well well-sm">
+     <span style="color: gray; font-size: 25px;"
+           class="glyphicon glyphicon-question-sign"
+           title="Help">
+     </span>
+     <br/>
+     <label class="label label-default" style="background: gray">HELP</label>
+    </div>
+   </a>
+  </td>
+  <td style="white-space: nowrap; text-align: center">
+   <a href="/shift/new"
+      style="text-decoration: none">
+    <div class="well well-sm">
+     <span style="color: green; font-size: 25px;"
+           class="glyphicon glyphicon-plus-sign"
+           title="New report">
+     </span>
+     <br/>
+     <label class="label label-success" style="background: green">NEW</label>
+    </div>
+   </a>
+  </td>
+ </tr>
+</table>
+
+<div class="panel panel-default">
+  <table class="table table-striped table-condensed" width="100%">
+   <tr>
+    <th>Score</th>
+    <th>ID</th>
+    <th>Created</th>
+    <th>Matches</th>
+   </tr>
+  {% for result in results.rows %}
+   <tr>
+    <td>{{ result.score|floatformat:3 }}</td>
+    <td><a href="{% url 'philadelphia.views.report' result.doc.report_id %}">{{ result.doc.report_id|slice:"-8:" }}</a></td>
+    <td style="white-space:nowrap">{{ result.doc.created|date_format }}</td>
+    <td>
+     {% for k, v in result.fields.items %}
+     {% if v %}
+     <p>
+      {% if k != "default" %}<b>{{ k }}:</b> {% endif %}{% for r in v %}<p><pre>{{ r|safe }}</pre></p>{% endfor %}
+     </p>
+     {% endif %}
+     {% endfor %}
+    </td>
+   </tr>
+  {% endfor %}
+  </table>
+</div>
+
+{% include 'philadelphia/help.html' %}
+
+{% endblock %}
+

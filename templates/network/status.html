@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}Network Status | snopl.us{% endblock %}
+{% block content %}
+<style>
+  tr.default { background: #eee; }
+</style>
+
+<h1>Network Status Overview</h1>
+<h3>For more details, see <a href="http://snopl.us/nagios3/">Nagios</a>.</h3>
+<br/>
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#list" data-toggle="tab">Host List</a></li>
+  <li><a href="#deck" data-toggle="tab">UG Deck</a></li>
+  <li><a href="#crug" data-toggle="tab">UG Control Room</a></li>
+  <li><a href="#surface" data-toggle="tab">Surface</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="list">
+   {% include "network/list.html" %}
+  </div>
+  <div class="tab-pane" id="deck">
+   {% include "network/deck.html" %}
+  </div>
+  <div class="tab-pane" id="crug">
+   {% include "network/crug.html" %}
+  </div>
+  <div class="tab-pane" id="surface">
+   {% include "network/surf.html" %}
+  </div>
+</div>
+
+<script>
+// http://stackoverflow.com/questions/7862233
+var url = document.location.toString();
+if (url.match('#')) {
+  $('.nav-tabs a[href=#'+url.split('#')[1]+']').tab('show');
+}
+$('.nav-tabs a').on('shown', function(e) {
+  window.location.hash = e.target.hash;
+});
+</script>
+{% endblock %}
+

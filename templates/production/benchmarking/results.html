@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% block title %}Production benchmarking | snopl.us{% endblock %}
+{% block style %}{% include "production/style.css" %}{% endblock %}
+{% block extra_navbar %}
+{% include "production/nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-heading">Benchmarking results</div>
+  <div class="panel-body">
+    <form action="{% url 'production.views.benchmarking_results' %}" method="post"
+          enctype="multipart/form-data" onchange="submit();">
+      {% csrf_token %}
+      <table>
+        <tr><th>Version:</th><td>{{ form.version }}</td></tr>
+        <tr><th>Phase:</th><td>{{ form.phase }}</td></tr>
+      </table>
+    </form>
+  </div>
+  {% if results_zip %} 
+  <form action="{% url 'production.views.production_request' %}" method="get"
+        enctype="multipart/form-data">
+    {% csrf_token %}
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          {% for head in results_headings %}
+          <th>{{ head }}</th>
+          {% endfor %}
+          <th><input type="checkbox" onClick="toggle(this);"/>Toggle all</th>
+        </tr>
+      </thead>
+      {% for status, result, id in results_zip %}
+      <tr class="{{ status }}">
+        <td>{{ result.descriptor }}</td>
+        <td>{{ result.macro }}</td>
+        <td>
+          {% if result.commit %}
+          {{ result.commit|truncatechars:9 }}
+          {% endif %}
+        </td>
+        <td>{{ result.status }}</td>
+        <td>{{ result.size|floatformat:2 }}</td>
+        <td>{{ result.time|floatformat:2 }}</td>
+        <td>
+          {% if not result.commit and result.status == "completed" %}
+          <input type="checkbox" name="requestbox" value="{{ id }}_{{ result.macro }}"\>
+          {% else %}
+          -
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+      <tr>
+        <td></td><td></td><td></td><td></td><td></td>
+        <td colspan=2>
+          {{ form.errors }}
+          Make request:
+          <button class="btn btn-primary" type="submit" name="submit" value="Form-Number">Number</button>
+          <button class="btn btn-primary" type="submit" name="submit" value="Form-Time">Time</button>
+        </td>
+    </table>
+  </form>
+  {% endif %}
+</div>
+<script type="text/javascript">
+    function toggle(source) {
+        checkboxes = document.getElementsByName('requestbox');
+        for(var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
+</script>
+{% endblock %}

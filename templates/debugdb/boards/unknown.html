@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}{{ board_type }} {{ id }} | debugdb | snopl.us{% endblock %}
+{% block content %}
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="{% url "debugdb.views.index" %}">debugdb</a></li>
+ <li><a href="{% url "debugdb.views.boards" %}">Boards</a></li>
+ <li class="active">{{ board_type }} {{ id }}</li>
+</ol>
+
+<h1>
+ {% if status == "gold" %}
+  <span class="glyphicon glyphicon-star" style="color: gold;"></span>
+ {% elif status == "silver" %}
+   <span class="glyphicon glyphicon-star-empty" style="color: silver;"></span>
+ {% elif status == "bad" %}
+   <span class="glyphicon glyphicon-remove" style="color: #d9534f;"></span>
+ {% elif status == "bone" %}
+   <span>&#9760;</span>
+ {% endif %}
+ {{ board_type }} <b>{{ id }}</b>{% if queens_id %} ({{ queens_id }}){% endif %}
+</h1>
+
+<h1>Unknown board type "{{ board_type }}"!</h1>
+{% endblock %}
+

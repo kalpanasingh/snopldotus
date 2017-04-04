@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}{{ type }} Build Test {{ record.id }} | snopl.us{% endblock %}
+{% block content %}
+<h2>
+  <a href="/code/{{ path }}"><span style="color: gray" class="glyphicon glyphicon-chevron-left"></span></a>
+  {{ type }} Build Test {{ record.id }}
+</h2>
+<pre>{{ record.description }}</pre>
+<a href="{{ record.changeset_url }}"><img style="vertical-align:middle" src="{% static 'images/octocat.jpg' %}"/> View on GitHub</a><br/><br/>
+<table class="table table-striped table-condensed" width="100%">
+ <tr>
+  <th>Name</th>
+  <th>Node</th>
+  <th>Started</th>
+  <th>Completed</th>
+  <th>Status</th>
+  <th>Results</th>
+ </tr>
+{% for row in record.rows %}
+ <tr>
+  <td><a href="/code/{{ path }}/task/{{ row.value.name }}">{{ row.value.name }}</a></td>
+  <td>{{ row.value.node }}</a></td>
+  <td>{{ row.value.started }}</a></td>
+  <td>{{ row.value.completed }}</a></td>
+  <td>
+   {% if row.value.results.success and row.value.completed %}
+     <div class="label label-success" title="Passed">&nbsp;</div>
+   {% endif %}
+   {% if row.value.started and not row.value.completed %}
+     <div class="label label-primary" title="In progress">&nbsp;</div>
+   {% endif %}
+   {% if not row.value.results.success and row.value.completed %}
+     <div class="label label-danger" title="Failed">&nbsp;</div>
+   {% endif %}
+   {% if not row.value.started %}
+     <div class="label label-default" title="Waiting">&nbsp;</div>
+   {% endif %}
+  </td>
+  <td>
+   {% for attachment in row.value.results.attach_links %}
+     <a href="/code/{{ type }}/attachment/{{ row.id }}/{{ attachment.id }}">{{ attachment.name }}</a>
+   {% endfor %}
+   {% if row.value.results %}
+   <a data-toggle="modal" data-target="#results_{{ row.id }}" href="#results_{{ row.id }}">
+    <span style="color: gray" class="glyphicon glyphicon-cog"></span>
+   </a>
+   <div class="modal fade" id="results_{{ row.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-content">
+     <div class="modal-header">
+      <a class="close" data-dismiss="modal">&times;</a>
+      <h4 class="modal-title">{{ row.id }}</h4>
+     </div>
+     <div class="modal-body">
+      <pre style="color:black">
+       {{ row.value.results|pprint }}
+      </pre>
+     </div>
+    </div>
+   </div>
+   {% endif %}
+  </td>
+ </tr>
+{% endfor %}
+</table>
+{% endblock %}
+

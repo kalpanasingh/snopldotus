@@ -1,0 +1,31 @@
+{% extends 'debugdb/test.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block results %}
+
+<h3>Missing Bundles Check</h3>
+Status: 
+{% if missing_bundles %}
+ <span class="label label-danger">fail</span>
+{% else %}
+ <span class="label label-success">pass</span>
+{% endif %}
+
+<h3>Channel Errors</h3>
+<ol start="0">
+ {% for error in errors %}
+ {% if error %}
+ <li><span class="label label-danger">fail</span></li>
+ {% else %}
+ <li><span class="label label-success">pass</span></li>
+ {% endif %}
+ {% endfor %}
+</ol>
+
+<h3>Output</h3>
+<pre>
+{{ printout }}
+</pre>
+
+{% endblock %}
+

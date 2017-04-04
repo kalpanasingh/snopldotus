@@ -1,0 +1,18 @@
+{% if status == "gold" %}
+ <span class="glyphicon glyphicon-tag" style="color: gold;"></span>
+{% elif status == "silver" %}
+  <span class="glyphicon glyphicon-tag" style="color: silver;"></span>
+{% elif status == "bad" %}
+  <span class="glyphicon glyphicon-tag" style="color: #d9534f;"></span>
+{% elif status == "bone" %}
+  <span class="glyphicon glyphicon-tag" style="color: black;"></span>
+{% elif status == "matched" %}
+  <span class="glyphicon glyphicon-tag" style="color: blue;"></span>
+{% elif status == "notags" %}
+  <span class="glyphicon glyphicon-tag" style="color: #fff;"></span>
+{% elif status %}
+  <span class="glyphicon glyphicon-tag" style="color: #eee;"></span>
+{% else %}
+  <span class="glyphicon glyphicon-tag" style="color: #fff;"></span>
+{% endif %}
+

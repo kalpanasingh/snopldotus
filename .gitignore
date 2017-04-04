@@ -1,0 +1,4 @@
+*.pyc
+./snopldotus/settings.py
+snopldotus/settings.py
+./spectrum/*.py

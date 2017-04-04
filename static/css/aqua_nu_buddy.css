@@ -1,0 +1,55 @@
+body {
+  background: white;
+  width: 100%;
+  height: 100%; }
+
+.background {
+  display: block;
+  width: 470px;
+  height: 454px;
+  background: #e6e6e6;
+  margin: 0 auto;
+  position: relative;
+  top: 0;
+  left: 0;
+  border: 0 0 0 0; }
+
+.foreground {
+  background-image: url(/static/images/nubuddy_alpha.png);
+  width: 470px;
+  height: 454px;
+  /* display:inline-block; */
+  position: absolute;
+  left: 0;
+  top: 0; 
+  pointer-events: none;}
+
+@keyframes waveaction {
+  0% {
+    background-position: 0 bottom; }
+
+  100% {
+    background-position: 600px bottom; } }
+	
+.water {
+  background-image: url(/static/images/waves3.png);
+  animation: waveaction 3s infinite linear;
+  background-size: 600px 300px;
+  background-repeat: repeat-x;
+  opacity: 1;
+  background-size: 600px 0px;
+  /* @include background-clip(initial); */
+  /* display:inline-block; */ }
+
+.duckie {
+  position: absolute;
+  bottom: 410px;
+  left: 190px;
+  margin: 0;
+  padding: 0;
+  width: 17px;
+  height: 15px;
+  background-size: 34px 15px;
+  background-repeat: no-repeat;
+  background-image: url(/static/images/duckies.png);
+  background-position: -17px 0px; }

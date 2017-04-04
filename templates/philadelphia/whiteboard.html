@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Whiteboard "{{ title }}" | snopl.us{% endblock %}
+{% block content %}
+<h1 style="white-space: nowrap;">
+ <a href="/shift/whiteboards"><span class="glyphicon glyphicon-chevron-left"
+     style="color: gray;"></span></a>
+ <a href="#"><span class="phl-unlock glyphicon glyphicon-lock"
+     style="color: gray; font-size: 25pt"></span></a>&nbsp;
+ <input disabled
+        id="phl-title"
+        type="text"
+        style="font-size: 24pt; width: 72%"
+        value="{{ title }}"/>
+ {% if user.is_superuser %}
+ <a href="#"
+    id="phl-delete"
+    style="color: gray; font-size: 20px; margin-right:15px">
+  <span class="glyphicon glyphicon-trash" title="Delete"></span>
+ </a>
+{% endif %}
+</h1>
+<span class="label label-default">
+ DOCUMENT ID:
+ <span id="phl-id">{{ id }}</span>@<span id="phl-rev">{{ rev }}</span>
+</span>
+<br/>
+<span class="label label-default">
+ EDITOR ID:
+ <span id="phl-editor-id">{{ editor_id }}</span>
+</span>
+<br/>
+<span class="label label-default">
+ <span class="glyphicon glyphicon-floppy-disk" style="color: white;"></span>&nbsp;
+ <span id="phl-saved">{{ saved }}</span>
+</span>
+<br/><br/>
+<textarea disabled
+          style="font-family: monospace; resize: none;"
+          rows="25" cols="80">
+{{ text }}
+</textarea>
+
+<script>
+var phl_dirty = false;
+var phl_load = true;
+
+setInterval(function() {
+  if (phl_dirty) {
+    phl_load = false;
+    save();
+  }
+  load_board();
+}, 2000);
+
+$('.phl-unlock').on('click', function(e) {
+  e.preventDefault();
+  var doc_id = $('#phl-id').text();
+  var doc_rev = $('#phl-rev').text();
+  var editor_id = $('#phl-editor-id').text();
+  $.get('/shift/whiteboard/' + doc_id + '?json=true', function(data) {
+    data.editor_id = editor_id;
+    data.csrfmiddlewaretoken = '{{ csrf_token }}';
+    $.post('/shift/whiteboard/' + doc_id + '?rev=' + doc_rev, data, function(data) {
+      $('.phl-unlock')
+        .addClass('glyphicon-pencil')
+        .removeClass('glyphicon-lock')
+        .css('color', 'orange');
+      $('textarea').attr('disabled', false)
+      $('input').attr('disabled', false)
+      $('#phl-rev').text(data.rev);
+      $('#phl-saved').text(data.saved);
+    })
+    .fail(function(e) {
+      toastr.error('Failed to unlock whiteboard in database (POST)', 'Error');
+    })
+  })
+  .fail(function(e) {
+    toastr.error('Failed to unlock whiteboard in database (GET)', 'Error');
+  });
+});
+
+$('textarea').on('keyup', function(e) {
+  phl_dirty = true;
+});
+
+$('input').on('keyup', function(e) {
+  phl_dirty = true;
+});
+
+$('#phl-delete').on('click', function(e) {
+  e.preventDefault();
+  if (confirm("Are you sure you want to delete this whiteboard?")) {
+    $.ajax({
+      url: '/shift/delete/' + $('#phl-id').text(),
+      beforeSend: function(xhr, settings) {
+        var csrftoken = '{{ csrf_token }}';
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      },
+      type: 'DELETE',
+      success: function(data, textStatus, jqXHR) {
+        window.location.href = '/shift/whiteboards';
+      },
+      error: function(e) {
+        toastr.error('Failed to remove whiteboard from database', 'Error');
+      }
+    });
+  }
+});
+
+function save() {
+  var doc_id = $('#phl-id').text();
+  var doc_rev = $('#phl-rev').text();
+  var data = {
+    _id: doc_id,
+    _rev: doc_rev,
+    editor_id: $('#phl-editor-id').text(),
+    text: $('textarea').val(),
+    title: $('#phl-title').val(),
+    type: 'board',
+    csrfmiddlewaretoken: '{{ csrf_token }}'
+  }
+  $.post('/shift/whiteboard/' + doc_id + '?rev=' + doc_rev, data, function(data) {
+    $('#phl-rev').text(data.rev);
+    $('#phl-saved').text(data.saved);
+    phl_dirty = false;
+    phl_load = true;
+  })
+  .fail(function(e) {
+    toastr.error('Failed to save whiteboard in database', 'Error');
+    phl_load = true;
+  })
+}
+
+function load_board() {
+  var doc_id = $('#phl-id').text();
+  var doc_rev = $('#phl-rev').text();
+  var editor_id = $('#phl-editor-id').text();
+
+  $.get('/shift/whiteboard/' + doc_id + '?json=true', function(data) {
+    $('#phl-rev').text(data._rev);
+    $('#phl-saved').text(data.saved);
+    if (data.editor_id && !(data.editor_id == editor_id)) {
+      $('textarea').attr('disabled', true)
+      $('input').attr('disabled', true)
+      $('textarea').val(data.text);
+      $('#phl-title').val(data.title);
+      $('.phl-unlock')
+        .removeClass('glyphicon-pencil')
+        .addClass('glyphicon-lock')
+        .css('color', 'gray');
+    }
+  })
+  .fail(function(e) {
+    toastr.error('Failed to check whiteboard in database', 'Error');
+  });
+}
+</script>
+
+{% endblock %}
+

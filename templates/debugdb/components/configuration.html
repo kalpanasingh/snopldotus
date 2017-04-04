@@ -1,0 +1,28 @@
+{% load filters %}
+<table class="table table-condensed">
+ <tr>
+  <th>Location</th>
+  <td>{{ config.loc }}</td>
+ </tr>
+ <tr>
+  <th>Crate/Slot</th>
+  <td>{{ config.crate_id }} / {{ config.slot }}</td>
+ </tr>
+ <tr>
+  <th>FEC ID</th>
+  <td><a href="{% url "debugdb.views.board" config.fec_id %}">{{ config.fec_id }}</a></td>
+ </tr>
+ <tr>
+  <th>DBs</th>
+  <td>
+   <ol start="0" style="padding: 0; padding-left: 2.5ex">
+    {% for db in config.db %}
+    {% with db|get2:"db_id" as id %}
+    <li><a href="{% url "debugdb.views.board" id %}">{{ id }}</a></li>
+    {% endwith %}
+    {% endfor %}
+   </ol>
+  </td>
+ </tr>
+</table>
+

@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load humanize %}
+{% block title %}Production benchmarking | snopl.us{% endblock %}
+{% block style %}{% include "production/style.css" %}{% endblock %}
+{% block extra_navbar %}
+{% include "production/nav.html" %}
+{% endblock %}
+{% block content %}
+<div class="panel panel-default">
+  <div class="panel-heading">Benchmarking request (time): RAT {{ rat_version }}</div>
+  <form action="{% url 'production.views.production_request' %}" method="get"
+        enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ formset.management_form }}
+    <div class="panel-body">
+      Runs of: <input id="runDuration" name="runDuration" class="time_tg" value=365>
+      <input type="hidden" name="rat_version" value="{{ rat_version }}">
+      <select id="runFormat" type="select" name="runFormat" class="time_tg">
+        <option value="day">days</option>
+        <option value="second">seconds</option>
+      </select>
+    </div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-md-1">Phase</th>
+          <th class="col-md-2">Macro</th>
+          <th class="col-md-1">Size / event (kB)</th>
+          <th class="col-md-1">Time / event (s)</th>
+          <th class="col-md-1">Rate</th>
+          <th class="col-md-1">Request</th>
+          <th class="col-md-1">Runs</th>
+          <th class="col-md-1">Templates</th>
+        </tr>
+      </thead>
+      {% for form in formset %}
+      <tr id="{{ form.prefix }}-row">
+        <input type="hidden" id="{{ form.prefix }}-macro_key" name="macro_key" value="{{ form.prefix }}"/>          
+        <td>
+          <button type="button" id="{{ form.prefix }}-add" class="btn_add">
+            <span class="glyphicon glyphicon-plus-sign btn-success"></span>
+          </button>
+          <button type="button" id="{{ form.prefix }}-remove" class="btn_remove">
+            <span class="glyphicon glyphicon-minus-sign btn-danger"></span>
+          </button>
+        </td>
+        {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        {% for value in form.hidden_tabs %}
+        <td>{{ value }}</td>
+        {% endfor %}
+        {% for visible in form.visible_fields %}
+        {% if not visible.is_template %}
+        <td>
+          {{ visible.errors.as_ul }}
+          {{ visible }}
+        </td>
+        {% endif %}
+        {% endfor %}
+        <td>
+          <table class="table">
+            {% for template in form.template_fields %} 
+            <input type="hidden" name="{{ form.prefix }}_template_names" value="{{ template.name }}"/>
+            {{ template.errors.as_ul }}
+            <tr>
+              <td>{{ template.name }}:</td>
+              <td>{{ template }}
+            </td></tr>
+            {% endfor %}
+          </table>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <button class="btn btn-primary glyphicon glyphicon-download" type="submit" name="submit" value="time-JSON">
+      JSON
+    </button>
+    <button class="btn btn-primary glyphicon glyphicon-download" type="submit" name="submit" value="time-CSV">
+      CSV
+    </button>
+  </form>
+</div>
+<script type="text/javascript">
+    
+  function get_seconds_per() {
+      var format = $('#runFormat')[0].value;        
+      if(format == "day")
+          return 86400;
+      else
+          return 1;
+  }
+  
+  function update_rate() {
+      var duration = $('#runDuration')[0].value;
+      var seconds_per = get_seconds_per();
+      var time_per_run = duration * seconds_per;
+      // Update rates for each input field
+      $('.request_tg').each(function(i, object) {
+          var row_id = object.id.split('-', 1)[0]
+          if($('#'+row_id+'-rate')[0].disabled != true) {
+              var size = $('#'+row_id+'-size')[0].value;
+              var time = $('#'+row_id+'-time')[0].value;
+              // Calculate the number of runs and events per run based on 1 GB / 20 hour limit
+              var size_limit = (1024 * 1024.0) / size; // size in kB
+              var time_limit = (3600 * 20.0) / time; // time in s
+              var ev_per_run = size_limit;
+              if(time_limit < ev_per_run) ev_per_run = time_limit;
+              var rate = ev_per_run / time_per_run;
+              $('#'+row_id+'-rate')[0].value = rate.toFixed(5);
+          }
+      });
+  }
+  
+  
+  function update_request(target_id) {       
+      var row_id = target_id.split("-", 1)[0]
+      var duration = $('#runDuration')[0].value;
+      var seconds_per = get_seconds_per();
+      var time_per_run = duration * seconds_per;
+      // Can use event.target.value for value (but unsure about paste/keyup if reintroduced)
+      var events = $('#'+target_id)[0].value;
+      var rate = $('#'+row_id+'-rate')[0].value;
+      var n_runs = events / (rate * time_per_run);
+      $('#'+row_id+'-n_runs')[0].value = Math.ceil(n_runs).toFixed(0);      
+  }
+  
+  function add_row(event, counter) {
+      var id_prefix = event.target.id.split("-", 1)[0];
+      var new_prefix = "clone" + counter;
+      var row_id = id_prefix + "-row";
+      var new_row = $("#"+row_id).clone();
+      new_row[0].id = "clone" + counter + row_id; // this is going to add possibility of clone_clone_clone_... etc
+      // Also need to update ALL the IDS of the inputs and buttons
+      new_row.find("input").each( function() {
+          this.id = new_prefix + this.id;
+          // There is a hidden input that informs which rows are correlated...
+          if(this.id.match('-macro_key'))
+              this.value = new_prefix + id_prefix;
+          else
+              this.name = new_prefix + this.name;
+      });
+      new_row.find("button").each( function() {
+          this.id = new_prefix + this.id;
+      });
+      $(new_row).insertAfter( $("#" + row_id ).closest( "tr" ) );
+      // Update the total number of forms for the formset
+      var numForms = parseInt($('#id_form-TOTAL_FORMS').val());
+      $("#id_form-TOTAL_FORMS").val((numForms+1).toString());
+  }
+  
+  function remove_row(event) {
+      var row_id = event.target.id.split("-", 1)[0];
+      var tr_id = row_id + "-row";
+      $('#'+tr_id).remove();
+      // Update the total number of forms for the formset
+      var numForms = parseInt($('#id_form-TOTAL_FORMS').val());
+      $("#id_form-TOTAL_FORMS").val((numForms-1).toString());
+  }
+  
+  $(document).ready(function() {
+      
+      row_id_ctr = 0; // increment with each new row
+
+      // begin by filling the rates in
+      update_rate();
+      
+      // Update to the number of events
+      // Use the body to do this (rather than $(.class)
+      // to catch dynamically created elements
+      $("body").on("change input", '.request_tg', function(event) {
+          // Paste and keyup seem to get old values sometimes...
+          update_request(event.target.id);
+      });
+      
+      // Update to the duration requested
+      $("body").on("change input", ".time_tg", function(event) {
+          // Update the rates for all macros
+          update_rate();
+      });
+
+
+      $("body").on("click", ".btn_add", function(event) {
+          row_id_ctr += 1;
+          add_row(event, row_id_ctr);
+      });
+
+      $("body").on("click", ".btn_remove", function(event) {
+          remove_row(event);
+      });
+
+      
+  });
+</script>
+{% endblock %}
+

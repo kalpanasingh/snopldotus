@@ -1,0 +1,77 @@
+{% extends 'debugdb/test.html' %}
+{% load filters %}
+{% block results %}
+<h3>Summary</h3>
+<table class="table">
+ <tr>
+  <th style="width: 1%; white-space: nowrap">Balanced</th>
+  <td>
+   {% if balanced %}
+   <span class="label label-success">yes</span>
+   {% else %}
+   <span class="label label-danger">no</span>
+   {% endif %}
+  </td>
+ </tr>
+</table>
+
+<h4>Channel Status</h4>
+<table class="table table-striped table-condensed">
+ {% for x in errors %}
+ <tr>
+  <th style="width: 1%">{{ forloop.counter0 }}</th>
+  <td style="width: 1%">
+   {% if x %}
+   <span class="label label-danger">fail</span>
+   {% else %}
+   <span class="label label-success">pass</span>
+   {% endif %}
+  </td>
+  <td>
+   {% if error_flags|get2:forloop.counter0 == 1 %}
+   Error 1: Wrong number of pedestals
+   {% elif error_flags|get2:forloop.counter0 == 2 %}
+   Error 2: Bad Q pedestal channel
+   {% elif error_flags|get2:forloop.counter0 == 3 %}
+   Error 3: Bad Q and wrong number of pedestals
+   {% endif %}
+  </td>
+ </tr>
+ {% endfor %}
+</table>
+
+<h3>Results</h3>
+{% for channel in 32|get_range %}
+<table class="table table-striped table-condensed" style="border: solid 2px {%if errors|get2:channel %}#d9534f{% else %}#ddd{% endif %}">
+ <tr>
+  <th>Channel</th>
+  <th>Cell</th>
+  <th>Num</th>
+  <th>QHL</th>
+  <th>QHL RMS</th>
+  <th>QHS</th>
+  <th>QHS RMS</th>
+  <th>QLX</th>
+  <th>QLX RMS</th>
+  <th>TAC</th>
+  <th>TAC RMS</th>
+ </tr>
+ {% for cell in 16|get_range %}
+ <tr>
+  <td>{{ channel }}</td>
+  <td>{{ cell }}</td>
+  <td>{{ num|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ qhl|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ qhl_rms|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ qhs|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ qhs_rms|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ qlx|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ qlx_rms|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ tac|get2:channel|get2:cell|floatformat:1 }}</td>
+  <td>{{ tac_rms|get2:channel|get2:cell|floatformat:1 }}</td>
+ </tr>
+ {% endfor %}
+</table>
+{% endfor %}
+{% endblock %}
+

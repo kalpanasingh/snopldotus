@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Status | Detector | snopl.us{% endblock %}
+{% block content %}
+<div id="notifications" style="display: none; margin-top: 10px;" class="alert"></div>
+<table style="margin-top: 10px; width: 100%">
+ <tr>
+  <td valign="top" style="width: 600px;">
+   <div id="subsystems-canvas" style="margin: 10px"></div>
+  </td>
+  <td valign="top" style="width: 100%;">
+   <div class="tabbable tabs-left" style="margin-left: 25px">
+    <ul class="nav nav-tabs" data-tabs="tabs" style="float: left; width: 120px">
+    {% for subsystem in subsystems %}
+     <li><a href="#tab-{{ subsystem.name|cut:' ' }}" data-toggle="tab">{{ subsystem.name }}</a></li>
+    {% endfor %}
+    </ul>
+    <div class="tab-content" style="margin-left: 150px; width: 65%">
+     {% for subsystem in subsystems %}
+     <div class="tab-pane{% if forloop.counter == 1 %} active{% endif %}" id=tab-{{ subsystem.name|cut:' ' }}>
+      <table style="width: 100%;">
+       <tr>
+        <td style="font-size: large; font-weight: bold;">
+         {{ subsystem.name }}
+        </td>
+        <td rowspan="3" style="text-align: right;">
+         <button type="button" class="btn btn-default btn-new-tag" data-subsystem="{{ subsystem.name }}">
+          <span class="glyphicon glyphicon-tag"></span>
+         </button>
+         <div class="btn-group" data-toggle="buttons">
+          <button type="button"
+                  data-field="enabled"
+                  data-subsystem="{{ subsystem.name }}"
+                  class="btn btn-{% if subsystem.enabled %}success active{% else %}danger{% endif %} btn-io-toggle">
+           <span class="glyphicon glyphicon-off"></span>
+          </button>
+          <button type="button"
+                  data-field="problems"
+                  data-subsystem="{{ subsystem.name }}"
+                  class="btn btn-{% if subsystem.problems %}danger{% else %}success active{% endif %} btn-io-toggle">
+           <span class="glyphicon glyphicon-ok"></span>
+          </button>
+         </div>
+        </td>
+       </tr>
+       <tr>
+        <td style="font-weight: normal;">
+         {{ subsystem.contact.user.first_name }} {{ subsystem.contact.user.last_name }}
+         <span style="white-space: nowrap;">
+          <button class="btn btn-default btn-xs" onclick="alert({{ subsystem.contact.phone }});"><span class="glyphicon glyphicon-earphone"></span></button>
+          <a href="mailto:{{ subsystem.contact.user.email }}">
+           <button class="btn btn-default btn-xs"><span class="glyphicon glyphicon-envelope"></span></button>
+          </a>
+         </span>
+        </td>
+       </tr>
+      </table>
+      <div class="tag-pane" data-subsystem="{{ subsystem.name }}" style="height: 100%; overflow: auto;">
+       {% for tag in subsystem.tags %}
+       <div style="margin-top:10px; width: 95%">
+        <span class="label label-{{ tag.status }}">
+         {{ tag.author.user.first_name }} {{ tag.author.user.last_name }} ({{ tag.timestamp }})
+        </span><br/>
+        <div class="alert alert-{{ tag.status }}">
+         {{ tag.message }}
+        </div>
+       </div>
+       {% endfor %}
+      </div>
+     </div>
+     {% endfor %}
+    </div>
+   </div>
+  </td>
+ </tr>
+</table>
+
+<div class="modal fade" id="tag-form-modal">
+ <div class="modal-dialog">
+  <div class="modal-content">
+   <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">New tag</h4>
+   </div>
+   <div class="modal-body">
+    <form method="post" action="" id="tag-form">
+     <table>
+      {{ tag_form.as_table }}
+     </table>
+    </form>
+   </div>
+   <div class="modal-footer">
+    <table style="width: 100%">
+     <tr>
+      <td><div class="alert pull-left" style="display: none;" id="modal-notifications"></div></td>
+      <td valign="top">
+       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+       <button type="button" class="btn btn-primary">Save changes</button>
+      </td>
+     </tr>
+    </table>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script src="{% static 'js/kinetic.min.js' %}"></script>
+<script>
+// Used for canvas markers
+var circles = {};
+var layer = new Kinetic.Layer();
+
+// Set up Ajax requests to include CSRF token
+var csrftoken = getCookie('csrftoken');
+function csrfSafeMethod(method) {
+  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({
+  crossDomain: false,
+  beforeSend: function(xhr, settings) {
+    if (!csrfSafeMethod(settings.type)) {
+      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    }
+  }
+});
+
+// Popup status message for Ajax success/failure
+function notify(success, message, target) {
+  if (!target) {
+    target = $('#notifications');
+  }
+
+  if (success) {
+    var cls = 'alert alert-success';
+  }
+  else {
+    var cls = 'alert alert-danger';
+  }
+
+  message = (new Date()).toLocaleString() + ": " + message;
+
+  target
+    .html(message)
+    .attr('class', cls)
+    .show('fade');
+}
+
+// Hangle on/off and working/not working toggle buttons
+function ioToggle(e) {
+  if (e.hasClass('btn-success')) {
+    e.removeClass('btn-success');
+    e.addClass('btn-danger');
+  }
+  else {
+    e.removeClass('btn-danger');
+    e.addClass('btn-success');
+  }
+}
+
+$('.btn-io-toggle').click(function(event) {
+  var elem = $(this);
+  ioToggle(elem);
+  var happy = (elem.hasClass('btn-success') &&
+               elem.siblings('.btn-io-toggle').hasClass('btn-success'));
+  circles[elem.attr('data-subsystem').replace(/\s/g, '')].setFill(happy ? 'green' : 'red');
+  layer.draw();
+
+  var d = {
+    subsystem: $(this).attr('data-subsystem'),
+    field: $(this).attr('data-field'),
+    value: !$(this).hasClass('active')
+  }
+
+  $.post('/detector/update-subsystem', d, function() {
+    notify(true, 'Saved changes');
+  })
+  .fail(function() {
+    notify(false, 'Error saving changes.')
+    ioToggle(elem);  // restore state
+  });
+});
+
+// Display new tag form
+$('.btn-new-tag').click(function(event) {
+  var elem = $(this);
+  var subsystem = elem.attr('data-subsystem');
+  $('#id_subsystem').children('[name=subsystem] option').filter(function() { 
+    return ($(this).text() == subsystem);
+    console.log($(this));
+  }).prop('selected', true);
+  //$('#id_subsystem').prop('disabled', true);
+  $('#tag-form-modal').modal();
+});
+
+// New tag form submission
+var tag_form = $('#tag-form');
+$('.btn').filter(function() { 
+  return ($(this).html() == 'Save changes');
+}).click(function(event) {
+ console.log(tag_form.serialize());
+ $.post('/detector/add-subsystem-tag', tag_form.serialize(), function() {
+   renderTag(tag_form);
+   $('#tag-form-modal').modal('hide');
+ })
+ .fail(function() {
+   notify(false, 'Error adding tag.', $('#modal-notifications'));
+ });
+});
+
+$('.btn').filter(function() { 
+  return ($(this).html() == 'Close');
+}).click(function(event) {
+ $('#modal-notifications').hide();
+});
+
+function renderTag(form) {
+ var subsystem = $('#id_subsystem option:selected').text();
+ var author = $('#id_author option:selected').text();
+ var message = $('#id_message').val();
+ var timestamp = (new Date()).toLocaleString();  // approximate
+ var stat = {
+  'None': 'default',
+  'Good': 'success',
+  'Has problems': 'warning',
+  'Bad': 'danger'
+ }[$('#id_status option:selected').text()];
+
+ var tag = $('<div style="margin-top:10px; width: 95%">'
+           + ' <span class="label label-' + stat + '">'
+           + author + ' ' + timestamp + '</span><br/>'
+           + '<div class="alert alert-' + stat + '">'
+           + message + '</div></div>');
+
+ var a = $('.tag-pane[data-subsystem="' + subsystem + '"]').prepend(tag);
+ console.log(a);
+}
+</script>
+
+<script defer="defer">
+// Canvas
+var stage = new Kinetic.Stage({
+ container: 'subsystems-canvas',
+ width: 566,
+ height: 333
+});
+
+var imageObj = new Image();
+imageObj.onload = function() {
+ var img = new Kinetic.Image({
+  image: imageObj,
+ });
+ layer.add(img);
+ img.moveToBottom();
+ stage.add(layer);
+};
+imageObj.src = "{% static 'images/subsystems.png' %}";
+
+var coords = {
+ 'Electronics': [216, 149],
+ 'Slow Controls': [243, 149],
+ 'Calibrations': [278, 139],
+ 'DAQ': [386, 147],
+ 'Data Flow': [412, 147],
+ 'Monitoring': [457, 126],
+ 'PMTs': [219, 279],
+ 'AV': [278, 275],
+ 'Cavity': [338, 300]
+};
+
+{% for subsystem in subsystems %}
+circles['{{ subsystem.name }}'] = new Kinetic.Circle({
+ x: coords['{{ subsystem.name }}'][0],
+ y: coords['{{ subsystem.name }}'][1],
+ radius: 7,
+ fill: {% if subsystem.enabled and not subsystem.problems %}'green'{% else %}'red'{% endif %}
+});
+circles['{{ subsystem.name }}']
+ .on('click', function(e) {
+  e.preventDefault();
+  $('a[href="#tab-{{ subsystem.name|cut:" " }}"]').tab('show');
+ })
+ .on('mouseover', function(e) {
+  document.body.style.cursor = 'pointer';
+ })
+ .on('mouseout', function(e) {
+  document.body.style.cursor = 'default';
+ })
+layer.add(circles['{{ subsystem.name }}']);
+layer.draw();
+circles['{{ subsystem.name }}'].moveToTop();
+{% endfor %}
+
+stage.add(layer);
+
+</script>
+
+{% endblock %}
+

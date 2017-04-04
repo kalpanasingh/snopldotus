@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}websnoed | Detector | snopl.us{% endblock %}
+{% block content %}
+    <style>
+      body {
+        font-family: sans-serif;
+        background-color: black;
+        overflow: hidden;
+        margin-top: -25px;
+      }
+      div.ui-frame {
+        margin: 5px;
+      }
+    </style>
+    <script type="text/javascript" src="{% static 'js/socket.io.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.flot.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/websnoed/Three.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/websnoed/pmtpos.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/websnoed/websnoed.js' %}"></script>
+    <script>    
+      WEB_SOCKET_SWF_LOCATION = "vendor/WebSocketMain.swf";
+      WEB_SOCKET_DEBUG = true;
+
+      var socket = io.connect('ws://snopl.us:8051/websnoed?username={{ username }}&xdr_token={{ xdr_token }}');
+
+      socket.on('alarm', function (msg) {
+        message('Alarm', msg);
+      });
+
+      socket.on('event', function(data) {
+        data = $.parseJSON(data);
+        websnoed.update(data);
+      });
+
+      socket.on('reconnect', function () {
+        socket.emit('initialize', []);
+        message('System', 'Reconnected to the server');
+      });
+
+      socket.on('reconnecting', function () {
+        message('System', 'Attempting to re-connect to the server');
+      });
+
+      socket.on('error', function (e) {
+        message('System', e ? e : 'A unknown error occurred');
+      });
+
+      function message(from, msg) {
+        $('body').append($('<p style="color:white">').append($('<b>').text(from), msg));
+        }
+
+        $(document).on('click', '#control-back', function(e) {
+          console.log('control back');
+          socket.emit('control_back');
+        });
+
+        $(document).on('click', '#control-forward', function(e) {
+          console.log('control back');
+          console.log('control forward');
+          socket.emit('control_forward');
+        });
+
+        $(document).on('click', '#control-pause', function(e) {
+          console.log('control pause');
+          socket.emit('control_toggle_pause');
+        });
+
+        $(document).on('click', '#control-settings', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('control settings');
+          var settings = {
+            nhit_threshold: $('#nhit_threshold').val(),
+            trigger_type: $('#trigger_type').val()
+          };
+          socket.emit('configure', settings);
+        });
+
+        $(document).ready(function () {
+          socket.emit('initialize', []);
+          websnoed.init();
+          websnoed.plots = {
+            charge: $.plot($("#plot-charge"), [{label: 'qhs', data: [[0,0],[4096,0]]}], websnoed.plot_options),
+            time: $.plot($("#plot-time"), [{label: 'time', data: [[0,0],[4096,0]]}], websnoed.plot_options),
+            caen_0: $.plot($("#plot-caen-0"), [{label: '0', data: [[0,0],[110,0]]}], websnoed.plot_options_caen),
+            caen_2: $.plot($("#plot-caen-2"), [{label: '2', data: [[0,0],[110,0]]}], websnoed.plot_options_caen)
+          };
+        });
+      </script>
+{% endblock %}
+

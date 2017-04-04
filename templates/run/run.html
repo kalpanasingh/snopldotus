@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}Run {{ number }} | snopl.us{% endblock %}
+{% block content %}
+<h1>
+ <a href="/runs{% if index_start %}?start={{ index_start }}{% endif %}"><span class="glyphicon glyphicon-chevron-left" style="color: gray"></span></a>
+ Run {{ number }}
+</h1>
+
+{% for warning in warnings %}
+<div class="alert alert-warning alert-dismissable">
+<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+<strong>Warning!</strong> {{ warning }}
+</div>
+{% endfor %}
+
+<ul class="nav nav-tabs">
+  <li class="active"><a href="#basic" data-toggle="tab">Basic</a></li>
+  <li><a href="#data" data-toggle="tab">Data Flow</a></li>
+  <li><a href="#processing" data-toggle="tab">Processing</a></li>
+  <li><a href="#shift" data-toggle="tab">Shift Report</a></li>
+  <li><a href="#calibration" data-toggle="tab">Calibration</a></li>
+  <li><a href="#cleaning" data-toggle="tab">Data Cleaning</a></li>
+  <li><a href="#quality" data-toggle="tab">Data Quality</a></li>
+  <li><a href="#selection" data-toggle="tab">Run Selection</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane active" id="basic">
+    {% include "run/basic.html" %}
+  </div>
+  <div class="tab-pane" id="data">
+    {% include "run/data.html" %}
+  </div>
+  <div class="tab-pane" id="processing">
+    {% include "run/processing.html" %}
+  </div>
+  <div class="tab-pane" id="shift">
+    {% include "run/shift.html" %}
+  </div>
+  <div class="tab-pane" id="calibration">
+    {% include "run/calibration.html" %}
+  </div>
+  <div class="tab-pane" id="cleaning">
+    {% include "run/cleaning.html" %}
+  </div>
+  <div class="tab-pane" id="quality">
+    {% include "run/quality.html" %}
+  </div>
+  <div class="tab-pane" id="selection">
+    {% include "run/run_selection.html" %}
+  </div>
+</div>
+
+{% endblock %}
+

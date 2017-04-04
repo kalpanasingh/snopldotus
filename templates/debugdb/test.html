@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block title %}{{ type }} {{ id|slice:"-10:" }} | debugdb | snopl.us{% endblock %}
+{% block content %}
+<ol class="breadcrumb" style="margin-top: 10px;">
+ <li><a href="{% url "debugdb.views.index" %}">debugdb</a></li>
+ <li><a href="{% url "debugdb.views.tests" %}">Tests</a></li>
+ <li><a href="{% url "debugdb.views.tests" type %}">{{ type }}</a></li>
+ <li class="active">{{ id|slice:"-10:" }}</li>
+</ol>
+
+<table>
+ <tr>
+  <td rowspan="2" style="font-size: 28pt; padding-right: 15px;">
+   {% if pass %}
+   <span class="glyphicon glyphicon-ok" style="color: #5cb85c;"></span>
+   {% else %}
+   <span class="glyphicon glyphicon-remove" style="color: #d9534f;"></span>
+   {% endif %}
+  </td>
+  <td style="font-size: 28pt">{{ type }} <b>{{ id|slice:"-10:" }}</b></td>
+ </tr>
+ <tr>
+  <td style="font-size: 14pt">{{ created }}</td>
+ </tr>
+</table>
+
+<div class="container-fluid">
+ <div class="row">
+  <div class="col-md-2">
+   <h3>Configuration</h3>
+   {% include "debugdb/components/configuration.html" %}
+  </div>
+  <div class="col-md-10">
+   <div>{% block results %}{% endblock %}</div>
+  </div>
+ </div>
+</div>
+{% endblock %}
+

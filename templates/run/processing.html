@@ -1,0 +1,20 @@
+{% load filters %}
+<h3>Processing Information</h3>
+<table class="table table-condensed table-striped" style="margin: 10px">
+  <tr>
+    <th>Status</th>
+    <th>Job</th>
+    <th>Pass #</th>
+    <th># Sub Jobs</th>
+  </tr>
+  <tr>
+  {% for row in processing.jobs %}
+  </tr>
+  <tr>
+    <td><span class="label {{ row.label }}">{{ row.value.1 }}</span></td>
+    <td>{{ row.value.0 }}</td>
+    <td>{{ row.value.2 }}</td>
+    <td>{{ row.value.3 }}</td>
+  </tr>
+  {% endfor %}
+</table>

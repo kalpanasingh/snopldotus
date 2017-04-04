@@ -1,0 +1,113 @@
+body {
+  padding: 10px;
+  padding-top: 50px;
+}
+
+label {
+  font-size: large;
+  font-weight: bold;
+}
+
+.rotate270 {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  margin-top: 55px;
+  margin-bottom: 0px;
+  margin-left: -50px;
+  margin-right: -0px;
+}
+
+.rotate180 {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+}
+
+.rotate90 {
+  width: 0;
+  white-space: nowrap;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+.tag-badge {
+ color: #fff;
+ width: 30px;
+ height: 30px;
+ line-height: 33px;
+ font-size: 1.1em;
+ text-align: center;
+ z-index: 100;
+ border-top-right-radius: 50%;
+ border-top-left-radius: 50%;
+ border-bottom-right-radius: 50%;
+ border-bottom-left-radius: 50%;
+}
+
+.tag-badge.gold { background: gold; }
+.tag-badge.silver { background: silver; }
+.tag-badge.bad { background: #d9534f; }
+.tag-badge.none { color: #ddd; background: white; border: solid 1px #ddd; }
+.tag-badge.bone { background: black; }
+.tag-badge.matched { background: blue; }
+
+hr { border-top: solid 1px #ddd; }
+
+.popover {
+  max-width: 600px;
+  width: auto;
+}
+
+.tooltip {
+  max-width: 800px;
+  width: auto;
+}
+
+.typeahead,
+.tt-query,
+.tt-hint {
+  padding: 8px 12px;
+  line-height: 30px;
+  outline: none;
+}
+
+.typeahead {
+  background-color: #fff;
+}
+
+.tt-hint {
+  color: #999
+}
+
+.tt-dropdown-menu {
+  width: 422px;
+  margin-top: 12px;
+  padding: 8px 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  -webkit-border-radius: 8px;
+     -moz-border-radius: 8px;
+          border-radius: 8px;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+     -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+          box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+  padding: 3px 20px;
+  line-height: 24px;
+}
+
+.tt-suggestion.tt-cursor {
+  color: #fff;
+  background-color: #0097cf;
+
+}
+
+.tt-suggestion p {
+  margin: 0;
+}
+

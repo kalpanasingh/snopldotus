@@ -1,0 +1,28 @@
+{% load staticfiles %}
+<html>
+  <head>
+    <title>snopl.us</title>
+    {% include "includes.html" %}
+  </head>
+  <body>
+    <div class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+       </button>
+       <a class="navbar-brand" href="/">snopl.us</a>
+      </div>
+      <div class="collapse navbar-collapse" id="navbar-main-collapse">
+       <ul class="nav navbar-nav navbar-right">
+        <ul class="nav" role="navigation">
+          <li><a class="navbar-link" href="/login?next=/">Log In</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="text-align: center">
+      <img src="{% static 'images/annihilation.png' %}"/>
+    </div>
+  </body>
+</html>
+

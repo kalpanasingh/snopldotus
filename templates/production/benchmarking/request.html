@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}Production benchmarking | snopl.us{% endblock %}
+{% block style %}{% include "production/style.css" %}{% endblock %}
+{% block extra_navbar %}
+{% include "production/nav.html" %}
+{% endblock %}
+{% block content %}
+{% if alert %}
+<div class="alert alert-success" role="alert">
+  {{ alert }}
+</div>
+{% endif %}
+<div class="panel panel-default">
+  <div class="panel-heading">Macro submission</div>
+  <div class="panel-body">
+    Please check macros before submitting, note that there should be no template strings beyond:
+    <ul>
+      <li>day (defaults to xxxx)</li>
+      <li>z (defaults to 0, for partial fill)</li>
+      <li>rate (defaults to 1, check with number of events</li>
+      <li>radius (defaults to 7000, for pmt betagammas)</li>
+    </ul>
+    <form action="{% url 'production.views.benchmarking_request' %}"
+          method="post" enctype="multipart/form-data">
+      <!-- There is no way to validate the macro on the client side (would need access!) -->
+      <table>
+        {% csrf_token %}
+        {{ form.as_table }}
+        <tr><td><input class="btn btn-primary" type="submit" value="Submit"></td><tr>
+      </table>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'debugdb/board.html' %}
+{% load staticfiles %}
+{% load filters %}
+{% block channels %}
+<br/>
+<table class="table table-condensed">
+ <tr><td colspan="4"><h4>Relays</h4></td></tr>
+ <tr>
+  <th style="text-align: center">0-7</th>
+  <th style="text-align: center">8-15</th>
+  <th style="text-align: center">16-23</th>
+  <th style="text-align: center">24-32</th>
+ </tr>
+ <tr>
+  {% for relay in relays %}
+  <td style="text-align: center;">
+   {% with relay as channel %}
+   {% with forloop.counter0 as index %}
+   {% with "relay" as channel_type_title %}
+   {% with "relays" as channel_type %}
+   {% include "debugdb/components/channel.html" %}
+   {% endwith %}
+   {% endwith %}
+   {% endwith %}
+   {% endwith %}
+  </td>
+  {% endfor %}
+ </tr>
+ <tr><td colspan="4"><h4>Channels</h4></td></tr>
+ <tr>
+  {% for channelset in channels|grouper:8 %}
+  {% with forloop.counter0 as cs_index %}
+  <td style="text-align: center">
+   {% for channel in channelset %}
+   {% with cs_index|multiply:8|add:forloop.counter0 as index %}
+   {% with "channel" as channel_type_title %}
+   {% with "channels" as channel_type %}
+   {% include "debugdb/components/channel.html" %}<br/>
+   {% endwith %}
+   {% endwith %}
+   {% endwith %}
+   {% endfor %}
+  </td>
+  {% endwith %}
+  {% endfor %}
+ </tr>
+</table>
+{% endblock %}
+

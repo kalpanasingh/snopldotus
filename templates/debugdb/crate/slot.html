@@ -1,0 +1,123 @@
+{% load filters %}
+{% with slot.fec as fec %}
+{% with slot.pmtic as pmtic %}
+{% with slot.dbs as dbs %}
+<div>
+ <table>
+  <tr>
+   <td class="well well-sm" style="margin: 5px; background: white; white-space: nowrap">
+    <div style="font-size: 8pt;border-bottom: solid 1px #ddd; margin-bottom: 5px">
+     {% if slot.fec %}
+     {% with slot.fec.status as status %}
+     {% include "debugdb/components/board_badge.html" %}
+     {% endwith %}
+     <b><a href="{% url "debugdb.views.board" slot.fec.id %}">{{ slot.fec.id }}</a></b>
+     {% else %}
+     <b>None</b>
+     {% endif %}
+     <button class="btn btn-link shuffle" data-crate="{{ crate_id }}" data-slot="{{ slot_id }}" data-type="fec" data-board="{{ slot.fec.id }}">
+      <span style="font-size: 6pt; color: #ddd; vertical-align: middle" class="glyphicon glyphicon-random"></span>
+     </button>
+     {% if slot.fec %}
+     {% with statuses|get2:slot.fec.id as status %}
+     <span>{% include "debugdb/components/tag_badge.html" %}</span>
+     {% endwith %}
+     {% endif %}
+    </div>
+    {% if slot.fec %}
+    <table style="width: 100%">
+     <tr>
+      {% for db in slot.dbs %}
+      <td style="background: white;">
+       <div class="rotate90" style="font-size: 8pt; white-space: nowrap; position:relative; top: -2.75em; left: -1.1em; height: 5em; width: 0">
+        {% with db.status as status %}
+        {% include "debugdb/components/board_badge.html" %}
+        {% endwith %}
+        {% with statuses|get2:db.id as status %}
+        {% include "debugdb/components/tag_badge.html" %}
+        {% endwith %}
+        {% if db.id %}
+        <b><a href="{% url "debugdb.views.board" db.id %}">{{ db.id }}</a></b>
+        {% endif %}
+       </div>
+       <div style="text-align: center">
+        <table>
+         {% for channel in db.channels %}
+         <tr>
+          <td style="padding: 3px; padding-bottom: 0">
+           <div style="height: 6px; width: 6px; background: {% if channel.ok %}#5cb85c{% else %}#d9534f{% endif %}" class="bs-tooltip" data-toggle="tooltip" data-placement="bottom" title="{% for tag in channel.tags|slice:'-1:' %}{{ tag.content }} ({{ tag.author }}, {{ tag.created }}){% endfor %}"></div>
+          </td>
+         </tr>
+         {% endfor %}
+        </table>
+        <button class="btn btn-link shuffle" data-board="{{ db.id }}">
+        <button class="btn btn-link shuffle" data-crate="{{ crate_id }}" data-slot="{{ slot_id }}" data-db="{{ forloop.counter0 }}" data-board="{{ db.id }}" data-type="db">
+         <span style="font-size: 6pt; color: #ddd; vertical-align: middle" class="glyphicon glyphicon-random"></span>
+        </button>
+       </div>
+      </td>
+      {% endfor %}
+     </tr>
+    </table>
+    {% endif %}
+   </td>
+  </tr>
+
+  <tr>
+   <td class="well well-sm" style="margin: 5px; background: white; white-space: nowrap">
+    <div style="font-size: 8pt;border-bottom: solid 1px #ddd; margin-bottom: 5px">
+     {% if slot.pmtic %}
+     {% with slot.pmtic.status as status %}
+     {% include "debugdb/components/board_badge.html" %}
+     {% endwith %}
+     <b><a href="{% url "debugdb.views.board" slot.pmtic.id %}">{{ slot.pmtic.id }}</a></b>
+     {% else %}
+     <b>None</b>
+     {% endif %}
+     <button class="btn btn-link shuffle" data-crate="{{ crate_id }}" data-slot="{{ slot_id }}" data-board="{{ slot.pmtic.id }}" data-type="pmtic">
+      <span style="font-size: 6pt; color: #ddd; vertical-align: middle" class="glyphicon glyphicon-random"></span>
+     </button>
+     {% if slot.pmtic %}
+     {% with statuses|get2:slot.pmtic.id as status %}
+     <span>
+      {% include "debugdb/components/tag_badge.html" %}
+     </span>
+     {% endwith %}
+     {% endif %}
+    </div>
+    {% if slot.pmtic %}
+    <table style="width: 100%">
+     <tr><td colspan="4" style="text-align: center; font-size: 8pt"><span class="label label-default">RELAYS</span></td></tr>
+     <tr>
+      {% for relay in slot.pmtic.relays %}
+      <td style="padding: 3px; padding-bottom: 0">
+       <div style="height: 6px; width: 6px; background: {% if relay.ok %}#5cb85c{% else %}#d9534f{% endif %}"></div>
+      </td>
+      {% endfor %}
+     </tr>
+     <tr><td colspan="4" style="text-align: center; font-size: 8pt; padding-top: 5px"><span class="label label-default">CHANNELS</span></td></tr>
+     <tr>
+      {% for channel_set in slot.pmtic.channels|grouper:8 %}
+      <td style="text-align: center">
+       <table>
+        {% for channel in channel_set %}
+        <tr>
+         <td style="padding: 3px; padding-bottom: 0">
+          <div style="height: 6px; width: 6px; background: {% if channel.ok %}#5cb85c{% else %}#d9534f{% endif %}"></div>
+         </td>
+        </tr>
+        {% endfor %}
+       </table>
+      </td>
+      {% endfor %}
+     </tr>
+    </table>
+    {% endif %}
+   </td>
+  </tr>
+ </table>
+</div>
+{% endwith %}
+{% endwith %}
+{% endwith %}
+

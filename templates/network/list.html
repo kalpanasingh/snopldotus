@@ -1,0 +1,32 @@
+{% load filters %}
+<table class="table table-striped">
+  <tr>
+    <th>Host</th>
+    <th style="text-align: center">State</th>
+    <th style="padding-left: 25px" width="100%">Services</th>
+  </tr>
+  {% for host, status in nagios_hosts %}
+  <tr class="{% if status.state == 0%}success{% else %}danger{% endif %}">
+   <td style="white-space: nowrap">
+     <b>{{ host }}</b><br/>
+     <span style="font-size:9pt">{{ status.address }}</span>
+   </td>
+   <td style="vertical-align: middle; text-align: center">
+     <span class="label label-{% if status.state == 0%}success{% else %}danger{% endif %}">{{ status.state_name }}</span>
+   </td>
+   <td style="vertical-align: middle; padding-left: 25px">
+     <ul style="list-style-type: none; padding: 0; margin: 0">
+     {% for service, service_status in status.services.items %}
+     <li>
+       <span class="label label-{% if service_status.state == 0%}success{% elif service_status.state == 1 %}warning{% elif service_status.state == 2 %}danger{% else %}default{% endif %}">{{ service }}</span>
+     {% if service_status.state != 0 %}
+       <span style="font-size: 8pt">{{ service_status.state_info }}</span>
+     {% endif %}
+     </li>
+     {% endfor %}
+     </ul>
+   </td>
+  </tr>
+  {% endfor %}
+</table>
+

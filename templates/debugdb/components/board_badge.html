@@ -1,0 +1,11 @@
+{% if status == "gold" %}
+ <span class="glyphicon glyphicon-star" style="color: gold;"></span>
+{% elif status == "silver" %}
+  <span class="glyphicon glyphicon-star-empty" style="color: silver;"></span>
+{% elif status == "bad" %}
+  <span class="glyphicon glyphicon-remove" style="color: #d9534f;"></span>
+{% elif status == "bone" %}
+  <span>&#9760;</span>
+{% else %}
+  <span class="glyphicon glyphicon-question-sign" style="color: #eee;"></span>
+{% endif %}

@@ -1,0 +1,235 @@
+<div class="modal fade"
+     id="phl-help-modal"
+     tabindex="-2"
+     role="dialog"
+     aria-labelledby="phlHelpLabel"
+     aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="phlHelpLabel">Help</h4>
+      </div>
+      <div class="modal-body">
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                 Viewing Reports
+                </a>
+              </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <p>To view a report, click its ID in the list. Note that submitted
+                (finished) reports are marked with a
+                <span class="glyphicon glyphicon-ok-circle" style="color: green"></span>
+                and reports still in progress are marked with a
+                <span class="glyphicon glyphicon-pencil" style="color: gray"></span>.</p>
+                <p>Reports are arranged as a
+                time-ordered series of "blocks" - customizable templates where the shift
+                operator fills in information.</p>
+                <p>Blocks with less-common information are hidden by default. You can toggle
+                showing/hiding any block by clicking the arrows:</p>
+                <table cellpadding="5">
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-chevron-right" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Show</td>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-chevron-down" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Hide</td>
+                 </tr>
+                </table>
+                <p>To download the report as a (LaTeX) PDF, click the save icon:
+                <table cellpadding="5">
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-floppy-save" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Save as PDF</td>
+                 </tr>
+                </table>
+                </p>
+                <p>To return to the index page, you can click the back button:
+                <table cellpadding="5">
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-chevron-left" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Back to home</td>
+                 </tr>
+                </table>
+                or choose "Detector &gt; Shift Reports" from the menu bar.</p>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                 Creating Reports
+                </a>
+              </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse in">
+              <div class="panel-body">
+                To create a new report, click the New Report button:
+                <table cellpadding="5">
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-plus-sign" style="color: green; font-size: 16pt"></span>
+                  </td>
+                  <th>Create new report</td>
+                 </tr>
+                </table></p>
+                <p>This will open the Shift Report Editor, where you will will compose your
+                report out of time-ordered "blocks" - customizable templates where you
+                fill in information. Each block contains a set of fields -- text boxes,
+                checkmarks, etc. A few recommended blocks are provided for you.</p>
+                <p>You can add and remove blocks, and customize any block by adding and
+                removing fields. Do not remove the <b>Basic Information</b> block, as this
+                contains information used in the listing page.</p>
+                <p>You'll encounter a few simple buttons:
+                <table cellpadding="5">
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-remove-circle" style="color: gray;"></span>
+                  </td>
+                  <th>Remove field (next to field name)</td>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-remove-circle" style="color: gray; font-size: 14pt;"></span>
+                  </td>
+                  <th>Remove block (upper right of block)</td>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-plus-sign" style="color: green; font-size: 14pt;"></span>
+                  </td>
+                  <th>Add block</td>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-ok-circle" style="color: gray; font-size: 14pt;"></span>
+                  </td>
+                  <th>Submit report</th>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-chevron-right" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Show</td>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-chevron-down" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Hide</td>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-plus-sign" style="color: gray;"></span>
+                   <a>Add field</a>
+                  </td>
+                  <th>Add a new field to the block</td>
+                 </tr>
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-paperclip" style="color: gray;"></span>
+                   <a>Add attachment</a>
+                  </td>
+                  <th>Attach a file to the block</td>
+                 </tr>
+                </table></p>
+                <p>It's possible that while you're editing, someone else will come along
+                and start editing one of your blocks. Only one person can modify a block
+                at a time, so the block will be hidden and shown with a lock:
+                <span class="glyphicon glyphicon-lock" style="color: gray;"></span>. You can
+                take back control by clicking the lock, but should communicate with the other
+                party (consider using the comments - a notification is shown when new comments
+                are made) to coordinate your efforts.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                 Editing Reports
+                </a>
+              </h4>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <p>Reports marked as in-progress with a
+                <span class="glyphicon glyphicon-pencil" style="color: gray"></span>
+                can be edited (while submitted reports, marked with a
+                <span class="glyphicon glyphicon-ok-circle" style="color: green"></span>,
+                cannot).</p>
+                <p>To edit a report, open it in the viewer and click the edit icon:
+                <table cellpadding="5">
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-pencil" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Edit</td>
+                 </tr>
+                </table>
+                </p>
+                <p>Each editor session has a unique Editor ID, and only one editor at a time
+                can modify a shift report block. Since this new editor doesn't "own" any of
+                the blocks, they will all appear as locked: 
+                <span class="glyphicon glyphicon-lock" style="color: gray"></span>.
+                </p>
+                <p>You can take over control of a block, which will lock out the block for
+                all other editors, by clicking the unlock button:
+                <table cellpadding="5">
+                 <tr>
+                  <td style="text-align:center">
+                   <span class="glyphicon glyphicon-lock" style="color: gray; font-size: 16pt"></span>
+                  </td>
+                  <th>Take control of block</td>
+                 </tr>
+                </table>
+                </p>
+                <p>This loads the latest version of the block and allows you to edit it. The
+                lock button now appears as the show/hide buttons which work the same
+                as in the report viewer.</p>
+                <p>You may also add new blocks to the report, and remove blocks which you have
+                editor control of. These changes will appear in other editors along with a
+                notification popup.</p>
+                <p>For an overview of the editor controls, see the <b>Creating Reports</b>
+                section.</p>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                 Making Comments 
+                </a>
+              </h4>
+            </div>
+            <div id="collapseFour" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <p>Whether you are viewing or editing a report, you can make comments and
+                everyone who's watching the report (viewing or editing) will be notified.</p>
+                <p>At the bottom of the view/edit page, enter your comment and your name and
+                click "Submit."</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
